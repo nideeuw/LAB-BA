@@ -1,0 +1,46 @@
+/* login.css */
+body {
+  background-color: #f0f0f0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  margin: 0;
+}
+
+.login-container {
+  height: 100vh;
+}
+
+/* Kolom kiri untuk form login */
+.login-form-section {
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+input {
+  margin-bottom: 15px;
+}
+
+.btn {
+  font-size: 16px;
+}
