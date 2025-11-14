@@ -1,0 +1,93 @@
+:root {
+    --primary-dark: #0A2E52;
+    --primary-light: #cedbe8;
+    --text-dark: #183656;
+}
+
+/* Reset dasar */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--primary-light);
+    color: var(--text-dark);
+    height: 100vh; /* agar tinggi body penuh layar */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* ini yang bikin vertikal tengah */
+}
+
+/* Section utama */
+.visi-misi-section {
+    width: 100%;
+}
+
+/* Container utama biar center rapi */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Kolom visi dan misi */
+.visi h2, .misi h2 {
+    font-weight: 800;
+    color: var(--text-dark);
+    letter-spacing: 1px;
+}
+
+/* Divider vertikal di tengah */
+.divider {
+    width: 2px;
+    background-color: var(--text-dark);
+    height: 350px;
+    margin: 0 20px;
+}
+
+/* Box konten */
+.visi-box, .misi-box {
+    background-color: #abbac9;
+    padding: 25px 30px;
+    border-radius: 6px;
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
+    line-height: 1.7;
+    min-height: 180px;
+}
+
+/* Teks visi */
+.visi-box p {
+    text-align: justify;
+
+}
+
+/* List Misi */
+.misi-box ol {
+    padding-left: 20px;
+}
+
+.misi-box li {
+    margin-bottom: 20px;
+}
+
+/* Responsif untuk HP */
+@media (max-width: 768px) {
+    body {
+        height: auto;
+        align-items: flex-start;
+    }
+
+    .divider {
+        display: none;
+    }
+
+    .visi, .misi {
+        margin-bottom: 40px;
+    }
+}
+
+/* Efek hover lembut */
+.visi-box:hover, .misi-box:hover {
+    transform: translateY(-3px);
+    transition: all 0.3s ease;
+    box-shadow: 6px 6px 18px rgba(0,0,0,0.2);
+}
