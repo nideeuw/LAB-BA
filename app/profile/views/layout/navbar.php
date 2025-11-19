@@ -19,9 +19,9 @@
         }
 
         .navbar {
-            background: rgba(146, 175, 227, 0.95);
+            background: #202740ff;
             backdrop-filter: blur(10px);
-            padding: 0.1rem 2rem;
+            padding: 0.1rem 2.5rem;
             box-shadow: none;
             position: sticky;
             top: 0;
@@ -43,10 +43,10 @@
         }
 
         .logo img {
-            height: 90px;
+            height: 100px;
             width: auto;
             object-fit: contain;
-            max-width: 300px;
+            max-width: 500px;
         }
 
         .nav-menu {
@@ -103,11 +103,11 @@
             position: absolute;
             top: 100%;
             left: 0;
-            background: rgba(146, 175, 227, 0.98);
+            background: #20274080;
             min-width: 200px;
             border-radius: 4px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            opacity: 0;
+            opacity: 70;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
@@ -149,59 +149,6 @@
             background: white;
             transition: 0.3s;
         }
-
-        @media (max-width: 768px) {
-            .logo img {
-                height: 70px;
-                max-width: 250px;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            .nav-menu {
-                position: absolute;
-                top: 70px;
-                left: -100%;
-                flex-direction: column;
-                background: rgba(172, 197, 244, 0.98);
-                width: 100%;
-                padding: 1rem;
-                gap: 1rem;
-                transition: 0.3s;
-                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            }
-
-            .nav-menu.active {
-                left: 0;
-            }
-
-            .nav-menu li {
-                width: 100%;
-            }
-
-            .nav-menu li a {
-                width: 100%;
-                text-align: center;
-            }
-
-            .dropdown-menu {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-                background: rgba(255, 255, 255, 0.1);
-                margin-top: 0.5rem;
-                display: none;
-            }
-
-            .dropdown.active .dropdown-menu {
-                display: block;
-            }
-        }
-
         .content {
             padding: 3rem 2rem;
             max-width: 1400px;
@@ -300,18 +247,18 @@
 
     // Definisi menu
     $menu_items = [
-        'home' => ['label' => 'HOME', 'url' => 'home.php'],
+        'home' => ['label' => 'HOME', 'url' => 'app/views/home.php'],
         'profile' => [
             'label' => 'PROFILE',
             'url' => '#',
             'submenu' => [
-                'visi-misi' => ['label' => 'Visi & Misi', 'url' => 'visi-misi.php'],
-                'struktur-organisasi' => ['label' => 'Structure Organization', 'url' => 'struktur-organisasi.php']
+                'visi-misi' => ['label' => 'Visi & Misi', 'url' => 'app/views/visi-misi.php'],
+                'struktur-organisasi' => ['label' => 'Structure Organization', 'url' => 'app/views/struktur-organisasi.php']
             ]
         ],
-        'news' => ['label' => 'NEWS & ACTIVITY', 'url' => 'news.php'],
-        'gallery' => ['label' => 'GALLERY', 'url' => 'gallery.php'],
-        'peminjaman-lab' => ['label' => 'PEMINJAMAN LAB', 'url' => 'peminjaman-lab.php']
+        'news' => ['label' => 'NEWS & ACTIVITY', 'url' => 'app/views/news.php'],
+        'gallery' => ['label' => 'GALLERY', 'url' => 'app/views/gallery.php'],
+        'peminjaman-lab' => ['label' => 'PEMINJAMAN LAB', 'url' => 'app/views/peminjaman-lab.php']
     ];
 
     // Fungsi untuk cek apakah menu aktif
@@ -337,7 +284,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="/PBL/assets/img/logo_lab.png" alt="Logo Lab BA">
+                <img src="/PBL/assets/img/logo.png" alt="Logo Lab BA">
             </div>
 
             <div class="hamburger" onclick="toggleMenu()">
@@ -415,7 +362,6 @@
                 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
                 laborum.</p>
         </div>
-
         <div class="section">
             <h2>Halo</h2>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -456,7 +402,6 @@
         });
 
         const scrollToTopBtn = document.getElementById('scrollToTop');
-
         window.addEventListener('scroll', function () {
             if (window.pageYOffset > 300) {
                 scrollToTopBtn.classList.add('show');
@@ -465,15 +410,12 @@
             }
             updateScrollProgress();
         });
-
         function scrollToTop() {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         }
-
-
     </script>
 </body>
 

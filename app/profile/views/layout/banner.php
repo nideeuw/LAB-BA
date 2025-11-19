@@ -7,7 +7,6 @@
     
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* ==== Slides Only Carousel Style ==== */
     body {
       margin: 0;
       background: #f4f4f4;
