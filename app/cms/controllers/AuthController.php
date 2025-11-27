@@ -1,11 +1,12 @@
 <?php
-require_once __DIR__ . '/../models/User.php';
+// require_once __DIR__ . '/../models/User.php';
 
-class AuthController
+class AuthController extends Controller
 {
     public function login($conn)
     {
         session_start();
+        $viewPath = 'cms/views/auth/login';
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = trim($_POST['username']);
@@ -16,15 +17,15 @@ class AuthController
             if ($user) {
                 $_SESSION['user'] = $user;
 
-                header('Location: /LAB-BA/app/cms/views/dashboard.php');
+                header('Location: /LAB-BA/cms/dashboard');
                 exit;
             } else {
                 $error = "Username atau password salah!";
-                include __DIR__ . '/../views/auth/login.php';
+                $this->view($viewPath, ['error' => $error]);
                 
             }
         } else {
-            include __DIR__ .'/../views/auth/login.php';
+            $this->view($viewPath);
         }
     }
 
@@ -33,7 +34,8 @@ class AuthController
         session_start();
         session_unset();
         session_destroy();
-        header('Location: /LAB-BA/cms/');
+        header('Location: /LAB-BA/cms/login');
         exit;
     }
 }
+?>

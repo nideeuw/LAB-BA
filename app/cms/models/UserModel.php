@@ -17,7 +17,7 @@ class UserModel
 
     public static function login($username, $password, $conn)
     {
-        $query = 'SELECT * FROM "user" WHERE "username" = $1 AND "is_active" = TRUE';
+        $query = 'SELECT * FROM users WHERE username = $1 AND is_active = TRUE';
         $result = pg_query_params($conn, $query, array($username));
 
         if ($row = pg_fetch_assoc($result)) {

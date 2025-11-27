@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LAB-BA | Login</title>
   <!-- Style -->
-  <link href="../../../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../../../../assets/css/login.css" rel="stylesheet">
+  <link href="/LAB-BA/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/LAB-BA/assets/css/login.css" rel="stylesheet">
 </head>
 
 <body>
@@ -18,7 +18,7 @@
       <div class="col-6 login-form-section">
         <form action="" method="POST">
           <div class="text-center">
-            <img src="../../../../assets/img/logo_black.png" alt="LAB-BA Logo" class="img-fluid" style="max-width: 250px;">
+            <img src="/LAB-BA/assets/img/logo_black.png" alt="LAB-BA Logo" class="img-fluid" style="max-width: 250px;">
           </div>
 
           <div class="form-group mb-3">
@@ -37,7 +37,7 @@
 
       <!-- Right side: Image -->
       <div class="col-6 login-image-section">
-        <img src="../../../../assets/img/maskot.png" alt="Login Image" class="img-fluid">
+        <img src="/LAB-BA/assets/img/maskot.png" alt="Login Image" class="img-fluid">
       </div>
     </div>
   </div>

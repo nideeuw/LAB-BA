@@ -1,20 +1,9 @@
 RewriteEngine On
 RewriteBase /LAB-BA/
 
-# Untuk akses CMS
-RewriteCond %{REQUEST_URI} ^/LAB-BA/cms/
+# Jika file atau folder ada, biarkan akses langsung (untuk assets/ vendor/)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^cms/(.*)$ cms/index.php [QSA,L]
 
-# Untuk dashboard CMS
-RewriteRule ^cms/dashboard$ app/cms/views/dashboard.php [L]
-
-# Untuk akses Profile/Landing Page
-RewriteCond %{REQUEST_URI} ^/LAB-BA/profile/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^profile/(.*)$ profile/index.php [QSA,L]
-
-# Default ke profile jika akses root
-RewriteRule ^$ profile/index.php [L]
+# Semua permintaan lainnya diarahkan ke index.php, dengan path sebagai variabel 'url'
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

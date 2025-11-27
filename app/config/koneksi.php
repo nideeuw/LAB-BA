@@ -40,7 +40,5 @@ $conn = pg_connect("host=$host port=$port dbname=$dbname user=$user password=$pa
 
 if (!$conn) {
     die("Koneksi gagal: " . pg_last_error());
-} else {
-    echo "Koneksi berhasil!";
 }
 ?>
