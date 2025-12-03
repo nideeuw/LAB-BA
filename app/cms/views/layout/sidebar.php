@@ -1,3 +1,10 @@
+<?php
+/**
+ * Sidebar Layout
+ * File: app/cms/views/layout/sidebar.php
+ */
+?>
+
 <!-- [ Sidebar Menu ] start -->
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
@@ -35,10 +42,19 @@
                         $hasChildren = !empty($item['children']);
                         $isActive = ($active_page == $item['slug']) ? 'active' : '';
 
-                        // FIX: Gunakan $base_url
+                        // Generate URL
+                        if (!empty($item['menu_url'])) {
+                            // Jika ada menu_url, cek apakah external atau internal
+                            if (filter_var($item['menu_url'], FILTER_VALIDATE_URL)) {
+                                // External URL (http/https)
+                                $url = $item['menu_url'];
                             } else {
-                                $url = $base_url . '/cms/' . $item['slug'];
+                                // Internal URL
+                                $url = $base_url . '/' . ltrim($item['menu_url'], '/');
                             }
+                        } else {
+                            // Jika tidak ada menu_url, gunakan slug
+                            $url = $base_url . '/cms/' . $item['slug'];
                         }
 
                         $liClass = 'pc-item';
