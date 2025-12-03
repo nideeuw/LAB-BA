@@ -78,7 +78,7 @@ class Router
                     <body>
                         <h1>404 - Not Found</h1>
                         <p>The requested URL <code>" . htmlspecialchars($uri) . "</code> was not found on this server.</p>
-                        <p><a href='/cms/dashboard'>Back to Dashboard</a></p>
+                        <p><a href='/'>Back to Home</a></p>
                     </body>
                     </html>";
             die();
@@ -86,8 +86,8 @@ class Router
 
         // Parse controller string
         $parts = explode('/', $matchedRoute);
-        $modul = array_shift($parts);           // e.g., 'cms'
-        $controllerName = ucfirst(array_shift($parts)) . 'Controller'; // e.g., 'MenuController'
+        $modul = array_shift($parts);           // e.g., 'profile'
+        $controllerName = ucfirst(array_shift($parts)) . 'Controller'; // e.g., 'HomeController'
         $methodName = array_shift($parts);      // e.g., 'index'
 
         // Build controller path
@@ -111,7 +111,7 @@ class Router
                         <h1>404 - Controller File Not Found</h1>
                         <p>Controller file: <code>{$controllerPath}</code></p>
                         <p>Expected structure: <code>app/{$modul}/controllers/{$controllerName}.php</code></p>
-                        <p><a href='/cms/dashboard'>Back to Dashboard</a></p>
+                        <p><a href='/'>Back to Home</a></p>
                     </body>
                     </html>";
             die();
@@ -147,13 +147,14 @@ class Router
                     <h1>404 - Method Not Found</h1>
                     <p>Method: <code>{$controllerName}::{$methodName}()</code></p>
                     <p>Available methods: " . implode(', ', get_class_methods($controllerInstance)) . "</p>
-                    <p><a href='/cms/dashboard'>Back to Dashboard</a></p>
+                    <p><a href='/'>Back to Home</a></p>
                 </body>
                 </html>";
             die();
         }
 
-        // This ensures controller receives: $conn, ['id' => 4] instead of $conn, 4
+        // FIX: Call method with $conn and $params (even if empty)
+        // This ensures consistent method signature
         $controllerInstance->$methodName($this->conn, $params);
     }
 }

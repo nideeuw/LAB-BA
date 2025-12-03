@@ -1,15 +1,3 @@
-<?php
-/**
- * Footer Layout for Profile (Landing Page)
- * File: app/profile/views/layout/footer.php
- * 
- * Variable yang harus tersedia: $base_url
- */
-?>
-
-<link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/home.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <footer>
     <div class="footer-container">
         <div class="footer-section">
@@ -31,20 +19,46 @@
                         <span>Home</span>
                     </a>
                 </li>
+                <li>
+                    <i class="fas fa-info-circle"></i>
+                    <a href="<?php echo $base_url; ?>/tentang-lab" style="color: inherit; text-decoration: none;">
+                        <span>Tentang Lab</span>
+                    </a>
+                </li>
+                <li>
+                    <i class="fas fa-users"></i>
+                    <a href="<?php echo $base_url; ?>/members" style="color: inherit; text-decoration: none;">
+                        <span>Members</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
         <div class="footer-section">
             <h3>Social Media</h3>
             <div class="social-links">
-                <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
-                <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" target="_blank" rel="noopener noreferrer" title="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" title="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
             </div>
         </div>
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; <?php echo date('Y'); ?> Laboratorium Bussines Analyst | POLITEKNIK NEGERI MALANG</p>
+        <p>&copy; <?php echo date('Y'); ?> Laboratorium Business Analyst | POLITEKNIK NEGERI MALANG</p>
     </div>
 </footer>
+
+<div class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"></div>
+
+</body>
+</html>
