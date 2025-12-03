@@ -10,7 +10,7 @@
 </head>
 
 <body>
-
+<?php include __DIR__ . '/layout/navbar.php'; ?>
   <div class="container">
     <h1>Struktur Organisasi</h1>
 
@@ -148,5 +148,7 @@
     </div>
   </div>
 </body>
-
+<?php 
+include __DIR__ . '/layout/footer.php'; 
+?>
 </html>
