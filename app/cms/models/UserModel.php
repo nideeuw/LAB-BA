@@ -1,32 +1,138 @@
 <?php
 
+/**
+ * User Model
+ * File: app/cms/models/UserModel.php
+ */
+
 class UserModel
 {
-    public static function register($username, $password, $conn) {
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    /**
+     * Register user baru
+     */
+    public static function register($username, $password, $conn)
+    {
+        try {
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = 'INSERT INTO "user" ("username", "password") VALUES ($1, $2)';
-        $result = pg_query_params($conn, $query, array($username, $hashedPassword));
+            $query = 'INSERT INTO "users" ("username", "password") VALUES (:username, :password)';
+            $stmt = $conn->prepare($query);
+            $stmt->execute([
+                'username' => $username,
+                'password' => $hashedPassword
+            ]);
 
-        if ($result) {
             return true;
-        } else {
+        } catch (PDOException $e) {
+            error_log("Register error: " . $e->getMessage());
             return false;
         }
     }
 
+    /**
+     * Login user
+     */
     public static function login($username, $password, $conn)
     {
-        $query = 'SELECT * FROM users WHERE username = $1 AND is_active = TRUE';
-        $result = pg_query_params($conn, $query, array($username));
+        try {
+            $query = 'SELECT * FROM users WHERE username = :username AND is_active = TRUE';
+            $stmt = $conn->prepare($query);
+            $stmt->execute(['username' => $username]);
 
-        if ($row = pg_fetch_assoc($result)) {
-            if (password_verify($password, $row['password'])) {
-                return $row;
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                // Verify password
+                if (password_verify($password, $user['password'])) {
+                    return $user;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-        } else {
+        } catch (PDOException $e) {
+            error_log("Login error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user by ID
+     */
+    public static function getUserById($id, $conn)
+    {
+        try {
+            $query = 'SELECT * FROM users WHERE id = :id';
+            $stmt = $conn->prepare($query);
+            $stmt->execute(['id' => $id]);
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get user error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get all users
+     */
+    public static function getAllUsers($conn)
+    {
+        try {
+            $query = 'SELECT * FROM users ORDER BY id DESC';
+            $stmt = $conn->query($query);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get all users error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Update user
+     */
+    public static function updateUser($id, $data, $conn)
+    {
+        try {
+            $query = 'UPDATE users SET username = :username';
+
+            // Jika password diupdate
+            if (isset($data['password']) && !empty($data['password'])) {
+                $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+                $query .= ', password = :password';
+            } else {
+                unset($data['password']);
+            }
+
+            $query .= ' WHERE id = :id';
+
+            $data['id'] = $id;
+
+            $stmt = $conn->prepare($query);
+            $stmt->execute($data);
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Update user error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Delete user
+     */
+    public static function deleteUser($id, $conn)
+    {
+        try {
+            $query = 'DELETE FROM users WHERE id = :id';
+            $stmt = $conn->prepare($query);
+            $stmt->execute(['id' => $id]);
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Delete user error: " . $e->getMessage());
             return false;
         }
     }

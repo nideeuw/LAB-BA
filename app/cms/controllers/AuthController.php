@@ -1,11 +1,13 @@
 <?php
-// require_once __DIR__ . '/../models/User.php';
 
 class AuthController extends Controller
 {
     public function login($conn)
     {
-        session_start();
+        if (isset($_SESSION['user_id'])) {
+            redirect('/cms/dashboard');
+        }
+
         $viewPath = 'cms/views/auth/login';
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -15,27 +17,36 @@ class AuthController extends Controller
             $user = UserModel::login($username, $password, $conn);
 
             if ($user) {
-                $_SESSION['user'] = $user;
-
-                header('Location: /LAB-BA/cms/dashboard');
-                exit;
+                // Set session
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['username'];
+                $_SESSION['user_email'] = $user['email'] ?? '';
+                
+                // Redirect pakai helper
+                redirect('/cms/dashboard');
             } else {
                 $error = "Username atau password salah!";
-                $this->view($viewPath, ['error' => $error]);
-                
+                $this->view($viewPath, [
+                    'error' => $error,
+                    'base_url' => getBaseUrl()
+                ]);
             }
         } else {
-            $this->view($viewPath);
+            $this->view($viewPath, [
+                'base_url' => getBaseUrl()
+            ]);
         }
     }
 
-    public function logout()
+    public function logout($conn)
     {
-        session_start();
+        // HAPUS: session_start(); ← JANGAN PAKAI INI!
+        
         session_unset();
         session_destroy();
-        header('Location: /LAB-BA/cms/login');
-        exit;
+        
+        // Redirect pakai helper
+        redirect('/cms/login'); // ← PAKAI INI
     }
 }
 ?>

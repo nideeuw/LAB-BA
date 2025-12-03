@@ -6,29 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LAB-BA | Login</title>
   <!-- Style -->
-  <link href="/LAB-BA/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/LAB-BA/assets/css/login.css" rel="stylesheet">
+  <link href="<?php echo $base_url; ?>/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="<?php echo $base_url; ?>/assets/css/login.css" rel="stylesheet">
 </head>
 
 <body>
   <div class="container-fluid login-container d-flex">
     <div class="row">
-      <?php if (isset($error)) { echo "<p style='color: red;'>$error</p>"; } ?>
+
+      <!-- Error message -->
+      <?php if (isset($error)): ?>
+        <div class="alert alert-danger"><?php echo $error; ?></div>
+      <?php endif; ?>
+
       <!-- Left side: Login Form -->
       <div class="col-6 login-form-section">
         <form action="" method="POST">
           <div class="text-center">
-            <img src="/LAB-BA/assets/img/logo_black.png" alt="LAB-BA Logo" class="img-fluid" style="max-width: 250px;">
+            <img src="<?php echo $base_url; ?>/assets/img/logo_black.png" alt="LAB-BA Logo" class="img-fluid" style="max-width: 250px;">
           </div>
 
           <div class="form-group mb-3">
             <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
           </div>
 
           <div class="form-group mb-4">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
           </div>
 
           <button type="submit" class="btn btn-primary w-100">Login</button>
@@ -37,10 +42,9 @@
 
       <!-- Right side: Image -->
       <div class="col-6 login-image-section">
-        <img src="/LAB-BA/assets/img/maskot.png" alt="Login Image" class="img-fluid">
+        <img src="<?php echo $base_url; ?>/assets/img/maskot.png" alt="Login Image" class="img-fluid">
       </div>
     </div>
-  </div>
   </div>
 </body>
 

@@ -17,8 +17,8 @@ spl_autoload_register(function ($class) {
     // Konvensi: Jika nama file adalah Controller atau Model, cari di folder yang sesuai
     $dirs = [
         'core/',
-        'cms/controllers/',
-        'cms/models/',    // UserModel ada di sini
+        'cms/controllers/', 
+        'cms/models/',
         'profile/controllers/',
         'profile/models/',
     ];
@@ -35,7 +35,7 @@ spl_autoload_register(function ($class) {
 
 // --- 2. Koneksi Database ---
 // File koneksi.php akan membuat variabel $conn
-require_once APP_PATH . 'config/koneksi.php';
+$conn = require_once APP_PATH . 'config/koneksi.php'; 
 // PASTIKAN koneksi.php TIDAK MENGANDUNG ECHO APAPUN!
 
 
