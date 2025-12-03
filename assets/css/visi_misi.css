@@ -1,7 +1,7 @@
 :root {
     --primary-dark: #0A2E52;
-    --primary-light: #cedbe8;
-    --text-dark: #183656;
+    --primary-light: #D9E7F5;
+    --text-dark: #0A2E52;
 }
 
 /* Reset dasar */
@@ -10,10 +10,10 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--primary-light);
     color: var(--text-dark);
-    height: 100vh; /* agar tinggi body penuh layar */
+    height: 100vh; /* agar penuh layar */
     display: flex;
     justify-content: center;
-    align-items: center; /* ini yang bikin vertikal tengah */
+    align-items: center; /* posisi vertikal tengah */
 }
 
 /* Section utama */
@@ -21,15 +21,16 @@ body {
     width: 100%;
 }
 
-/* Container utama biar center rapi */
+/* Container utama */
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
+    gap: 60px;
 }
 
-/* Kolom visi dan misi */
+/* Judul kolom */
 .visi h2, .misi h2 {
     font-weight: 800;
     color: var(--text-dark);
@@ -40,24 +41,26 @@ body {
 .divider {
     width: 2px;
     background-color: var(--text-dark);
-    height: 350px;
-    margin: 0 20px;
+    height: 400px;
 }
 
 /* Box konten */
 .visi-box, .misi-box {
-    background-color: #abbac9;
-    padding: 25px 30px;
-    border-radius: 6px;
+    background-color: #AEC6DF;
+    padding: 35px 45px;
+    border-radius: 8px;
     box-shadow: 4px 4px 15px rgba(0,0,0,0.15);
     line-height: 1.7;
-    min-height: 180px;
+    min-height: 200px;
+    width: 100%;
+    max-width: 480px; /* sebelumnya sekitar 380–400px, sekarang lebih lebar */
 }
 
 /* Teks visi */
 .visi-box p {
     text-align: justify;
-
+    text-decoration: underline;
+    text-decoration-color: #0A4C7E;
 }
 
 /* List Misi */
@@ -66,11 +69,11 @@ body {
 }
 
 .misi-box li {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 /* Responsif untuk HP */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     body {
         height: auto;
         align-items: flex-start;
@@ -82,6 +85,10 @@ body {
 
     .visi, .misi {
         margin-bottom: 40px;
+    }
+
+    .visi-box, .misi-box {
+        max-width: 90%;
     }
 }
 

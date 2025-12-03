@@ -28,7 +28,7 @@ class Router {
         }
         
         // Memecah target (misal: cms/Auth/login)
-        $parts = explode('/', $target); 
+        $parts = explode('/', $target);
         $modul = array_shift($parts); // cms
         $controllerName = ucfirst(array_shift($parts)) . 'Controller'; // AuthController
         $methodName = array_shift($parts); // login
