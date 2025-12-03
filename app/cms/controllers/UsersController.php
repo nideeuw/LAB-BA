@@ -73,9 +73,12 @@ class UsersController extends Controller
         }
     }
 
-    public function edit($conn, $id)
+    public function edit($conn, $params = [])
     {
         checkLogin();
+
+        // Extract ID dari params
+        $id = $params['id'] ?? 0;
 
         $user = UserModel::getUserById($id, $conn);
 
@@ -95,9 +98,12 @@ class UsersController extends Controller
         $this->view('cms/views/users/users_edit', $data);
     }
 
-    public function update($conn, $id)
+    public function update($conn, $params = [])
     {
         checkLogin();
+
+        // Extract ID dari params
+        $id = $params['id'] ?? 0;
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/cms/users');
@@ -138,9 +144,12 @@ class UsersController extends Controller
         }
     }
 
-    public function delete($conn, $id)
+    public function delete($conn, $params = [])
     {
         checkLogin();
+
+        // Extract ID dari params
+        $id = $params['id'] ?? 0;
 
         // Prevent deleting yourself
         if ($id == $_SESSION['user_id']) {

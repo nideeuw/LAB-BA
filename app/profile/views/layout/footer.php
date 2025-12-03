@@ -1,4 +1,13 @@
-<link rel="stylesheet" href="/PBL/assets/css/home.css">
+<?php
+/**
+ * Footer Layout for Profile (Landing Page)
+ * File: app/profile/views/layout/footer.php
+ * 
+ * Variable yang harus tersedia: $base_url
+ */
+?>
+
+<link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/home.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <footer>
@@ -16,21 +25,26 @@
         <div class="footer-section">
             <h3>About</h3>
             <ul class="contact-info">
-                <li><i class="fas fa-flask"></i><span>Home</span></li>
+                <li>
+                    <i class="fas fa-flask"></i>
+                    <a href="<?php echo $base_url; ?>/" style="color: inherit; text-decoration: none;">
+                        <span>Home</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
         <div class="footer-section">
             <h3>Social Media</h3>
             <div class="social-links">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+                <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2025 Laboratorium Bussines Analyst | POLITEKNIK NEGERI MALANG</p>
+        <p>&copy; <?php echo date('Y'); ?> Laboratorium Bussines Analyst | POLITEKNIK NEGERI MALANG</p>
     </div>
 </footer>

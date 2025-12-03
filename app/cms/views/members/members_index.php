@@ -64,7 +64,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 <td><?php echo $member['id']; ?></td>
                                                 <td>
                                                     <?php if (!empty($member['image'])): ?>
-                                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($member['image']); ?>" 
+                                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($member['image']); ?>" 
                                                              alt="<?php echo htmlspecialchars($member['nama']); ?>"
                                                              class="rounded-circle"
                                                              style="width: 50px; height: 50px; object-fit: cover;">

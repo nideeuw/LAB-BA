@@ -33,6 +33,192 @@ class MembersModel
     }
 
     /**
+     * Get active members with research fields (for profile landing page)
+     * 
+     */
+    public static function getActiveMembersWithResearch($conn, $research_filter = 'all')
+    {
+        try {
+            if ($research_filter === 'all') {
+                $query = "
+                    SELECT 
+                        m.id,
+                        m.nama,
+                        m.gelar_depan,
+                        m.gelar_belakang,
+                        m.image as foto,
+                        m.jabatan,
+                        m.is_kepala_lab,
+                        STRING_AGG(DISTINCT r.title, ', ' ORDER BY r.title) as bidang_riset
+                    FROM members m
+                    LEFT JOIN researches r ON m.id = r.id_members AND r.is_active = TRUE
+                    WHERE m.is_active = TRUE
+                    GROUP BY m.id, m.nama, m.gelar_depan, m.gelar_belakang, m.image, m.jabatan, m.is_kepala_lab
+                    ORDER BY m.is_kepala_lab DESC, m.nama ASC
+                ";
+                $stmt = $conn->query($query);
+            } else {
+                $query = "
+                    SELECT 
+                        m.id,
+                        m.nama,
+                        m.gelar_depan,
+                        m.gelar_belakang,
+                        m.image as foto,
+                        m.jabatan,
+                        m.is_kepala_lab,
+                        STRING_AGG(DISTINCT r.title, ', ' ORDER BY r.title) as bidang_riset
+                    FROM members m
+                    JOIN researches r ON m.id = r.id_members AND r.is_active = TRUE
+                    WHERE m.is_active = TRUE 
+                    AND r.title = ?
+                    GROUP BY m.id, m.nama, m.gelar_depan, m.gelar_belakang, m.image, m.jabatan, m.is_kepala_lab
+                    ORDER BY m.is_kepala_lab DESC, m.nama ASC
+                ";
+                $stmt = $conn->prepare($query);
+                $stmt->execute([$research_filter]);
+            }
+
+            $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Add full name to each member
+            foreach ($members as &$member) {
+                $member['nama_lengkap'] = self::getFullName($member);
+            }
+
+            return $members;
+        } catch (PDOException $e) {
+            error_log("Get active members with research error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get member detail with research and publications (for profile detail page)
+     * 
+     */
+    public static function getMemberDetailForProfile($id, $conn)
+    {
+        try {
+            // Get member
+            $query = "
+                SELECT 
+                    m.id,
+                    m.nama,
+                    m.gelar_depan,
+                    m.gelar_belakang,
+                    m.image AS foto,
+                    m.email,
+                    m.jabatan,
+                    m.sinta_link,
+                    m.is_kepala_lab
+                FROM members m
+                WHERE m.id = ? AND m.is_active = TRUE
+            ";
+
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$id]);
+            $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$member) {
+                return null;
+            }
+
+            // Add full name
+            $member['nama_lengkap'] = self::getFullName($member);
+
+            // Get research fields
+            $member['bidang_riset'] = self::getMemberResearch($id, $conn);
+
+            // Get publications
+            $member['publikasi_list'] = self::getMemberPublications($id, $conn);
+            $member['total_publikasi'] = count($member['publikasi_list']);
+
+            return $member;
+        } catch (PDOException $e) {
+            error_log("Get member detail for profile error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get research fields for a member
+     */
+    public static function getMemberResearch($member_id, $conn)
+    {
+        try {
+            $query = "
+                SELECT title
+                FROM researches
+                WHERE id_members = ? AND is_active = TRUE
+                ORDER BY created_on DESC
+            ";
+
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$member_id]);
+            
+            $bidang_riset = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $bidang_riset[] = $row['title'];
+            }
+
+            return $bidang_riset;
+        } catch (PDOException $e) {
+            error_log("Get member research error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get publications for a member
+     */
+    public static function getMemberPublications($member_id, $conn)
+    {
+        try {
+            $query = "
+                SELECT 
+                    id,
+                    title AS judul,
+                    journal_name,
+                    year AS tahun,
+                    journal_link,
+                    COALESCE(kategori_publikasi, '-') AS kategori
+                FROM publications
+                WHERE id_members = ? AND is_active = TRUE
+                ORDER BY year DESC, title ASC
+            ";
+
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$member_id]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get member publications error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get list of research fields (for filter dropdown)
+     */
+    public static function getResearchFields($conn)
+    {
+        try {
+            $query = "
+                SELECT DISTINCT title 
+                FROM researches 
+                WHERE is_active = TRUE 
+                ORDER BY title
+            ";
+            $stmt = $conn->query($query);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get research fields error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
      * Get single member by ID
      */
     public static function getMemberById($id, $conn)
@@ -119,7 +305,7 @@ class MembersModel
                 'jabatan' => $data['jabatan'] ?? null,
                 'email' => $data['email'] ?? null,
                 'sinta_link' => $data['sinta_link'] ?? null,
-                'is_active' => $data['is_active'] ?? true,
+                'is_active' => $data['is_active'] ? 'true' : 'false',
                 'modified_by' => $_SESSION['user_name'] ?? 'system'
             ];
 
@@ -151,7 +337,7 @@ class MembersModel
 
             // Delete image file if exists
             if ($result && !empty($member['image'])) {
-                $imagePath = ROOT_PATH . 'public/' . $member['image'];
+                $imagePath = ROOT_PATH . 'assets/' . $member['image'];
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
@@ -167,6 +353,8 @@ class MembersModel
     /**
      * Upload and save member photo
      * Returns: image path or false
+     * 
+     * ✅ UPLOADS TO: assets/uploads/members/
      */
     public static function uploadImage($file)
     {
@@ -191,8 +379,8 @@ class MembersModel
                 return false;
             }
 
-            // Create upload directory
-            $uploadDir = ROOT_PATH . 'public/uploads/members';
+            // ✅ Upload to assets/uploads/members/
+            $uploadDir = ROOT_PATH . 'assets/uploads/members';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -204,7 +392,7 @@ class MembersModel
 
             // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                // Return relative path for database
+                // ✅ Return path: uploads/members/xxx.jpg
                 return 'uploads/members/' . $filename;
             }
 

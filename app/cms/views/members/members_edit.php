@@ -1,12 +1,11 @@
 <?php
-
 /**
- * Member Create View
- * File: app/cms/views/members/members_create.php
+ * Member Edit View
+ * File: app/cms/views/members/members_edit.php
  */
 
 // SET PAGE TITLE
-$page_title = 'Add Member';
+$page_title = 'Edit Member';
 
 // Include layout
 include __DIR__ . '/../layout/header.php';
@@ -37,20 +36,32 @@ include __DIR__ . '/../layout/sidebar.php';
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Add New Member</h5>
+                        <h5 class="mb-0">Edit Member: <?php echo htmlspecialchars(MembersModel::getFullName($member)); ?></h5>
                     </div>
                     <div class="card-body">
-                        <form action="<?php echo $base_url; ?>/cms/members/store" method="POST" enctype="multipart/form-data" id="memberForm">
+                        <form action="<?php echo $base_url; ?>/cms/members/update/<?php echo $member['id']; ?>" method="POST" enctype="multipart/form-data" id="memberForm">
 
                             <!-- Photo Upload -->
                             <div class="mb-3">
                                 <label for="image" class="form-label">Photo</label>
+                                
+                                <!-- Current Photo -->
+                                <?php if (!empty($member['image'])): ?>
+                                    <div class="mb-2">
+                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($member['image']); ?>" 
+                                             alt="Current photo" 
+                                             class="rounded-circle" 
+                                             style="width: 150px; height: 150px; object-fit: cover;">
+                                        <p class="text-muted small mt-1">Current photo</p>
+                                    </div>
+                                <?php endif; ?>
+                                
                                 <input type="file"
                                     class="form-control"
                                     id="image"
                                     name="image"
                                     accept="image/*">
-                                <small class="text-muted">Max 2MB. Accepted: JPG, PNG, WEBP. Recommended: 400x400px</small>
+                                <small class="text-muted">Leave empty to keep current photo. Max 2MB. Accepted: JPG, PNG, WEBP.</small>
 
                                 <!-- Image Preview -->
                                 <div id="imagePreview" class="mt-3" style="display: none;">
@@ -70,6 +81,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                     id="nama"
                                     name="nama"
                                     required
+                                    value="<?php echo htmlspecialchars($member['nama']); ?>"
                                     placeholder="e.g., John Doe">
                             </div>
 
@@ -82,6 +94,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                             class="form-control"
                                             id="gelar_depan"
                                             name="gelar_depan"
+                                            value="<?php echo htmlspecialchars($member['gelar_depan'] ?? ''); ?>"
                                             placeholder="e.g., Dr., Prof.">
                                         <small class="text-muted">Optional. e.g., Dr., Prof.</small>
                                     </div>
@@ -93,6 +106,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                             class="form-control"
                                             id="gelar_belakang"
                                             name="gelar_belakang"
+                                            value="<?php echo htmlspecialchars($member['gelar_belakang'] ?? ''); ?>"
                                             placeholder="e.g., S.Kom., M.Kom., Ph.D">
                                         <small class="text-muted">Optional. e.g., S.Kom., M.Kom.</small>
                                     </div>
@@ -106,6 +120,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                     class="form-control"
                                     id="jabatan"
                                     name="jabatan"
+                                    value="<?php echo htmlspecialchars($member['jabatan'] ?? ''); ?>"
                                     placeholder="e.g., Head of Laboratory, Lecturer">
                             </div>
 
@@ -116,6 +131,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                     class="form-control"
                                     id="email"
                                     name="email"
+                                    value="<?php echo htmlspecialchars($member['email'] ?? ''); ?>"
                                     placeholder="member@example.com">
                             </div>
 
@@ -126,6 +142,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                     class="form-control"
                                     id="sinta_link"
                                     name="sinta_link"
+                                    value="<?php echo htmlspecialchars($member['sinta_link'] ?? ''); ?>"
                                     placeholder="https://sinta.kemdikbud.go.id/authors/profile/...">
                                 <small class="text-muted">Full URL to SINTA profile page</small>
                             </div>
@@ -133,11 +150,13 @@ include __DIR__ . '/../layout/sidebar.php';
                             <!-- Active Status -->
                             <div class="mb-3">
                                 <div class="form-check form-switch">
+                                    <input type="hidden" name="is_active" value="0">
                                     <input class="form-check-input"
                                         type="checkbox"
                                         id="is_active"
                                         name="is_active"
-                                        checked>
+                                        value="1"
+                                        <?php echo $member['is_active'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="is_active">
                                         Active (Visible on public page)
                                     </label>
@@ -147,7 +166,7 @@ include __DIR__ . '/../layout/sidebar.php';
                             <!-- Form Actions -->
                             <div class="d-flex gap-2 mt-4">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="ti ti-device-floppy"></i> Create Member
+                                    <i class="ti ti-device-floppy"></i> Update Member
                                 </button>
                                 <a href="<?php echo $base_url; ?>/cms/members" class="btn btn-secondary">
                                     <i class="ti ti-x"></i> Cancel
@@ -161,32 +180,30 @@ include __DIR__ . '/../layout/sidebar.php';
 
             <!-- Help Card -->
             <div class="col-lg-4">
-                <div class="card bg-light-primary">
+                <div class="card bg-light-info">
                     <div class="card-body">
                         <h5 class="mb-3">
-                            <i class="ti ti-info-circle"></i> Member Guidelines
+                            <i class="ti ti-info-circle"></i> Edit Information
                         </h5>
 
-                        <h6 class="mb-2">Photo Requirements:</h6>
+                        <h6 class="mb-2">Photo:</h6>
                         <ul class="mb-3">
+                            <li>Leave empty to keep current photo</li>
+                            <li>Upload new to replace</li>
                             <li>Max size: 2MB</li>
                             <li>Format: JPG, PNG, WEBP</li>
-                            <li>Recommended: 400x400px</li>
-                            <li>Square aspect ratio</li>
                         </ul>
 
-                        <h6 class="mb-2">Name Format:</h6>
-                        <ul class="mb-3">
-                            <li>Full name: First Last</li>
-                            <li>Front title: Dr., Prof.</li>
-                            <li>Back title: S.Kom., M.Kom., Ph.D</li>
-                        </ul>
+                        <h6 class="mb-2">Member ID:</h6>
+                        <p class="mb-3"><?php echo $member['id']; ?></p>
 
-                        <h6 class="mb-2">Example:</h6>
-                        <ul class="mb-0">
-                            <li>Dr. John Doe, M.Kom., Ph.D</li>
-                            <li>Prof. Jane Smith, S.T., M.T.</li>
-                        </ul>
+                        <h6 class="mb-2">Created:</h6>
+                        <p class="mb-0">
+                            <?php echo !empty($member['created_by']) ? htmlspecialchars($member['created_by']) : '-'; ?><br>
+                            <small class="text-muted">
+                                <?php echo !empty($member['created_on']) ? date('d M Y H:i', strtotime($member['created_on'])) : '-'; ?>
+                            </small>
+                        </p>
                     </div>
                 </div>
 
@@ -195,7 +212,7 @@ include __DIR__ . '/../layout/sidebar.php';
                     <div class="card-body">
                         <h6 class="mb-3">Name Preview</h6>
                         <div id="namePreview" class="text-center p-3 bg-light rounded">
-                            <p class="mb-0"><em>Type to see preview...</em></p>
+                            <strong><?php echo htmlspecialchars(MembersModel::getFullName($member)); ?></strong>
                         </div>
                     </div>
                 </div>
@@ -234,7 +251,7 @@ $(document).ready(function() {
         }
     });
 
-    // Name preview
+    // Name preview update
     function updateNamePreview() {
         let gelarDepan = $("#gelar_depan").val().trim();
         let nama = $("#nama").val().trim();

@@ -74,7 +74,7 @@ class MembersController extends Controller
             'email' => trim($_POST['email'] ?? ''),
             'image' => $imagePath,
             'sinta_link' => trim($_POST['sinta_link'] ?? ''),
-            'is_active' => isset($_POST['is_active']) ? true : false
+            'is_active' => ($_POST['is_active'] ?? '0') == '1'
         ];
 
         $result = MembersModel::createMember($memberData, $conn);
@@ -88,9 +88,12 @@ class MembersController extends Controller
         }
     }
 
-    public function edit($conn, $id)
+    public function edit($conn, $params = [])
     {
         checkLogin();
+
+        // Get ID from params
+        $id = $params['id'] ?? 0;
 
         $member = MembersModel::getMemberById($id, $conn);
 
@@ -110,9 +113,12 @@ class MembersController extends Controller
         $this->view('cms/views/members/members_edit', $data);
     }
 
-    public function update($conn, $id)
+    public function update($conn, $params = [])
     {
         checkLogin();
+
+        // Get ID from params
+        $id = $params['id'] ?? 0;
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/cms/members');
@@ -141,7 +147,7 @@ class MembersController extends Controller
             'jabatan' => trim($_POST['jabatan'] ?? ''),
             'email' => trim($_POST['email'] ?? ''),
             'sinta_link' => trim($_POST['sinta_link'] ?? ''),
-            'is_active' => isset($_POST['is_active']) ? true : false
+            'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
         // Handle image upload if new image provided
@@ -151,12 +157,14 @@ class MembersController extends Controller
                 // Delete old image
                 $oldMember = MembersModel::getMemberById($id, $conn);
                 if (!empty($oldMember['image'])) {
-                    $oldImagePath = ROOT_PATH . 'public/' . $oldMember['image'];
+                    $oldImagePath = ROOT_PATH . 'assets/' . $oldMember['image'];
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
                     }
                 }
                 $memberData['image'] = $imagePath;
+            } else {
+                error_log("Failed to upload image");
             }
         }
 
@@ -166,14 +174,17 @@ class MembersController extends Controller
             setFlash('success', 'Member updated successfully!');
             redirect('/cms/members');
         } else {
-            setFlash('danger', 'Failed to update member');
+            setFlash('danger', 'Failed to update member. Please check error logs.');
             redirect('/cms/members/edit/' . $id);
         }
     }
 
-    public function delete($conn, $id)
+    public function delete($conn, $params = [])
     {
         checkLogin();
+
+        // Get ID from params
+        $id = $params['id'] ?? 0;
 
         $result = MembersModel::deleteMember($id, $conn);
 

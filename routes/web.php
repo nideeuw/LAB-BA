@@ -9,6 +9,8 @@
 // ========== Rute Publik (Profile/Landing Page) ==========
 $router->add('/', 'profile/Home/index');
 $router->add('/gallery', 'profile/Gallery/index');
+$router->add('/members', 'profile/Members/index');
+$router->add('/members/detail/{id}', 'profile/Members/detail');
 
 // ========== Rute CMS (Admin Panel) ==========
 
@@ -32,6 +34,7 @@ $router->add('/cms/menu/toggle/{id}', 'cms/Menu/toggle');
 $router->add('/cms/users', 'cms/Users/index');
 $router->add('/cms/users/create', 'cms/Users/create');
 $router->add('/cms/users/edit/{id}', 'cms/Users/edit');
+$router->add('/cms/users/update/{id}', 'cms/Users/update');
 $router->add('/cms/users/delete', 'cms/Users/delete');
 
 // Role Management
@@ -43,7 +46,8 @@ $router->add('/cms/role/delete', 'cms/Role/delete');
 // Members Management
 $router->add('/cms/members', 'cms/Members/index');
 $router->add('/cms/members/add', 'cms/Members/add');
-$router->add('/cms/members/edit', 'cms/Members/edit');
+$router->add('/cms/members/edit/{id}', 'cms/Members/edit');
+$router->add('/cms/members/update/{id}', 'cms/Members/update');
 $router->add('/cms/members/delete', 'cms/Members/delete');
 
 // Gallery Management
@@ -76,7 +80,7 @@ $router->add('/cms/lab_bookings/reject', 'cms/LabBookings/reject');
 
 // Visi Misi Management
 $router->add('/cms/visi-misi', 'cms/VisiMisi/index');
-$router->add('/cms/visi-misi/edit', 'cms/VisiMisi/edit');
+$router->add('/cms/visi-misi/edit/{id}', 'cms/VisiMisi/edit');
 
 // Contact Management
 $router->add('/cms/contact', 'cms/Contact/index');
@@ -86,7 +90,7 @@ $router->add('/cms/contact/delete', 'cms/Contact/delete');
 
 // Profile & Settings
 $router->add('/cms/profile', 'cms/Profile/index');
-$router->add('/cms/profile/edit', 'cms/Profile/edit');
+$router->add('/cms/profile/edit/{id}', 'cms/Profile/edit');
 $router->add('/cms/settings', 'cms/Settings/index');
 
 ?>

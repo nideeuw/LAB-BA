@@ -39,7 +39,17 @@ class Router
             if (preg_match($pattern, $uri, $matches)) {
                 $matchedRoute = $controller;
                 array_shift($matches); // Remove full match
-                $params = $matches;
+
+                // Extract parameter names from route
+                preg_match_all('/\{([a-zA-Z0-9_]+)\}/', $route, $paramNames);
+
+                // Build associative array of parameters
+                foreach ($paramNames[1] as $index => $paramName) {
+                    if (isset($matches[$index])) {
+                        $params[$paramName] = $matches[$index];
+                    }
+                }
+
                 break;
             }
         }
@@ -143,8 +153,7 @@ class Router
             die();
         }
 
-        // Call controller method with connection and parameters
-        $methodParams = array_merge([$this->conn], $params);
-        call_user_func_array([$controllerInstance, $methodName], $methodParams);
+        // This ensures controller receives: $conn, ['id' => 4] instead of $conn, 4
+        $controllerInstance->$methodName($this->conn, $params);
     }
 }
