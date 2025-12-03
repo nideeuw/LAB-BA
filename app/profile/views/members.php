@@ -1,152 +1,200 @@
+<?php
+require_once __DIR__ . '/../../config/koneksi.php';
+
+// Filter
+$filter_riset = $_GET['riset'] ?? 'all';
+
+// Ambil daftar riset
+$query_riset = "
+    SELECT DISTINCT title 
+    FROM researches 
+    WHERE is_active = TRUE 
+    ORDER BY title
+";
+$result_riset = pg_query($conn, $query_riset);
+$riset_list = $result_riset ? pg_fetch_all($result_riset) : [];
+
+// Query members dengan riset mereka
+if ($filter_riset === 'all') {
+  $query = "
+        SELECT 
+            m.id,
+            m.nama,
+            m.gelar_depan,
+            m.gelar_belakang,
+            TRIM(CONCAT(
+                COALESCE(m.gelar_depan || ' ', ''),
+                m.nama,
+                COALESCE(', ' || m.gelar_belakang, '')
+            )) as nama_lengkap,
+            m.image as foto,
+            m.jabatan,
+            m.is_kepala_lab,
+            STRING_AGG(DISTINCT r.title, ', ' ORDER BY r.title) as bidang_riset
+        FROM members m
+        LEFT JOIN researches r ON m.id = r.id_members AND r.is_active = TRUE
+        WHERE m.is_active = TRUE
+        GROUP BY m.id, m.nama, m.gelar_depan, m.gelar_belakang, m.image, m.jabatan, m.is_kepala_lab
+        ORDER BY m.is_kepala_lab DESC, m.nama ASC
+    ";
+  $result = pg_query($conn, $query);
+} else {
+  $query = "
+        SELECT 
+            m.id,
+            m.nama,
+            m.gelar_depan,
+            m.gelar_belakang,
+            TRIM(CONCAT(
+                COALESCE(m.gelar_depan || ' ', ''),
+                m.nama,
+                COALESCE(', ' || m.gelar_belakang, '')
+            )) as nama_lengkap,
+            m.image as foto,
+            m.jabatan,
+            m.is_kepala_lab,
+
+            STRING_AGG(DISTINCT r.title, ', ' ORDER BY r.title) as bidang_riset
+        FROM members m
+        JOIN researches r ON m.id = r.id_members AND r.is_active = TRUE
+        WHERE m.is_active = TRUE 
+        AND r.title = $1
+        GROUP BY m.id, m.nama, m.gelar_depan, m.gelar_belakang, m.image, m.jabatan, m.is_kepala_lab
+        ORDER BY m.is_kepala_lab DESC, m.nama ASC
+    ";
+  $result = pg_query_params($conn, $query, [$filter_riset]);
+}
+
+$members = $result ? pg_fetch_all($result) : [];
+
+// Pisahkan kepala lab & anggota
+$kepala_lab = null;
+$anggota = [];
+
+if ($members) {
+  foreach ($members as $m) {
+    if ($m['is_kepala_lab'] === 't' || $m['is_kepala_lab'] === true) {
+      $kepala_lab = $m;
+    } else {
+      $anggota[] = $m;
+    }
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Struktur Organisasi - Laboratorium</title>
-  <link rel="stylesheet" href="../../../assets/css/gallery.css">
-  <link rel="stylesheet" href="../../../assets/css/members.css">
+  <title>Tim Laboratorium</title>
+  <link rel="stylesheet" href="../../../assets/css/members.css?v=5">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
 </head>
 
-<body>
 
-  <div class="container">
-    <h1>Struktur Organisasi</h1>
+<!-- Filter -->
+<div class="filter-container">
+  <div class="filter-wrapper">
+    <i data-lucide="filter" class="filter-icon"></i>
 
-    <?php
-    // Data Struktur Organisasi 
-    $structure = [
-      'Kepala Laboratorium' => [
-        'name' => 'Dr. Risa Wijaya, M.Kom.',
-        'title' => 'Kepala Laboratorium',
-        'photo' => 'kepala_lab.jpeg'
-      ],
-      'Sekretaris' => [
-        'name' => 'Santi Dewi, S.T.',
-        'title' => 'Sekretaris',
-        'photo' => 'sekretaris.jpg'
-      ],
-      'Bendahara' => [
-        'name' => 'Bima Sakti, S.E.',
-        'title' => 'Bendahara',
-        'photo' => 'bendahara.jpg'
-      ],
-      'Koordinator' => [
-        'Pengembangan Keilmuan' => [
-          'name' => 'Fajar Pratama, M.TI.',
-          'title' => 'Pengembangan Keilmuan',
-          'photo' => 'koor_keilmuan.jpg'
-        ],
-        'Riset & PkM' => [
-          'name' => 'Ayu Lestari, M.Kom.',
-          'title' => 'Riset & PkM',
-          'photo' => 'koor_riset.jpg'
-        ],
-        'Kemitraan' => [
-          'name' => 'Joko Susilo, M.Kom.',
-          'title' => 'Kemitraan',
-          'photo' => 'koor_kemitraan.jpg'
-        ],
-        'Sarana & Prasarana' => [
-          'name' => 'Rina Amelia, S.Kom.',
-          'title' => 'Sarana & Prasarana',
-          'photo' => 'koor_sarana.jpg'
-        ],
-        'Publikasi' => [
-          'name' => 'Adi Nugroho, S.TI.',
-          'title' => 'Publikasi',
-          'photo' => 'koor_publikasi.jpg'
-        ],
-        'Pengelolaan Tugas Akhir' => [
-          'name' => 'Tika Handayani, M.T.',
-          'title' => 'Pengelolaan Tugas Akhir',
-          'photo' => 'koor_ta.jpg'
-        ]
-      ]
-    ];
-    ?>
+    <select id="filterRiset" class="filter-dropdown">
+      <option value="all" <?= $filter_riset === 'all' ? 'selected' : '' ?>>Semua Bidang</option>
+      <?php if ($riset_list): ?>
+        <?php foreach ($riset_list as $r): ?>
+          <option value="<?= htmlspecialchars($r['title']) ?>"
+            <?= $filter_riset === $r['title'] ? 'selected' : '' ?>>
+            <?= htmlspecialchars($r['title']) ?>
+          </option>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </select>
 
-    <div class="org-chart">
-
-      <div class="level level-1">
-        <div class="org-card boss-card">
-          <div class="card-image">
-            <?php $img = $structure['Kepala Laboratorium']['photo'];
-            $path = "../../../assets/img/" . $img; ?>
-            <?php if (!empty($img) && file_exists($path)): ?>
-              <img src="<?php echo $path; ?>" alt="<?php echo htmlspecialchars($structure['Kepala Laboratorium']['title']); ?>">
-            <?php else: ?>
-              <span class="placeholder-icon">👤</span>
-            <?php endif; ?>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title"><?php echo htmlspecialchars($structure['Kepala Laboratorium']['title']); ?></h3>
-            <p class="card-name"><?php echo htmlspecialchars($structure['Kepala Laboratorium']['name']); ?></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="level level-2">
-        <div class="card-group">
-          <div class="org-card secretary-card">
-            <div class="card-image">
-              <?php $img = $structure['Sekretaris']['photo'];
-              $path = "../../../assets/img/" . $img; ?>
-              <?php if (!empty($img) && file_exists($path)): ?>
-                <img src="<?php echo $path; ?>" alt="<?php echo htmlspecialchars($structure['Sekretaris']['title']); ?>">
-              <?php else: ?>
-                <span class="placeholder-icon">👤</span>
-              <?php endif; ?>
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"><?php echo htmlspecialchars($structure['Sekretaris']['title']); ?></h3>
-              <p class="card-name"><?php echo htmlspecialchars($structure['Sekretaris']['name']); ?></p>
-            </div>
-          </div>
-
-          <div class="org-card treasurer-card">
-            <div class="card-image">
-              <?php $img = $structure['Bendahara']['photo'];
-              $path = "../../../assets/img/" . $img; ?>
-              <?php if (!empty($img) && file_exists($path)): ?>
-                <img src="<?php echo $path; ?>" alt="<?php echo htmlspecialchars($structure['Bendahara']['title']); ?>">
-              <?php else: ?>
-                <span class="placeholder-icon">👤</span>
-              <?php endif; ?>
-            </div>
-            <div class="card-content">
-              <h3 class="card-title"><?php echo htmlspecialchars($structure['Bendahara']['title']); ?></h3>
-              <p class="card-name"><?php echo htmlspecialchars($structure['Bendahara']['name']); ?></p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="level level-3">
-        <div class="koordinator-grid">
-          <?php foreach ($structure['Koordinator'] as $key => $koor): ?>
-            <div class="org-card koor-card">
-              <div class="card-image">
-                <?php $img = $koor['photo'];
-                $path = "../../../assets/img/" . $img; ?>
-                <?php if (!empty($img) && file_exists($path)): ?>
-                  <img src="<?php echo $path; ?>" alt="<?php echo htmlspecialchars($koor['title']); ?>">
-                <?php else: ?>
-                  <span class="placeholder-icon">👥</span>
-                <?php endif; ?>
-              </div>
-              <div class="card-content">
-                <h3 class="card-title"><?php echo htmlspecialchars($koor['title']); ?></h3>
-                <p class="card-name"><?php echo htmlspecialchars($koor['name']); ?></p>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-    </div>
+    <svg class="dropdown-icon" data-lucide="chevron-down"></svg>
   </div>
+</div>
+
+<script>
+  document.getElementById('filterRiset').addEventListener('change', function() {
+    window.location = '?riset=' + encodeURIComponent(this.value);
+  });
+</script>
+
+
+<!-- Kepala Lab -->
+<?php if ($kepala_lab): ?>
+  <div class="kepala-lab-section">
+    <a href="members_detail.php?id=<?= $kepala_lab['id'] ?>" class="card-kepala">
+      <div class="card-kepala-content">
+        <div class="card-kepala-photo">
+          <?php if ($kepala_lab['foto']): ?>
+            <img src="../../../assets/img/<?= htmlspecialchars($kepala_lab['foto']) ?>"
+              alt="<?= htmlspecialchars($kepala_lab['nama_lengkap']) ?>"
+              onerror="this.src='../../../assets/img/default.jpg'">
+
+          <?php else: ?>
+            <img src="../../../assets/img/default.jpg" alt="Default">
+          <?php endif; ?>
+        </div>
+
+        <div class="card-kepala-info">
+          <h3 class="member-name"><?= htmlspecialchars($kepala_lab['nama_lengkap']) ?></h3>
+          <?php if ($kepala_lab['jabatan']): ?>
+            <p class="member-title"><?= htmlspecialchars($kepala_lab['jabatan']) ?></p>
+          <?php endif; ?>
+          <?php if ($kepala_lab['bidang_riset']): ?>
+            <div class="tags">
+              <?php foreach (explode(', ', $kepala_lab['bidang_riset']) as $b): ?>
+                <span class="tag"><?= htmlspecialchars($b) ?></span>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+    </a>
+  </div>
+<?php endif; ?>
+
+<!-- Anggota -->
+<?php if (!empty($anggota)): ?>
+  <div class="members-grid">
+    <?php foreach ($anggota as $member): ?>
+      <a href="members_detail.php?id=<?= $member['id'] ?>" class="card-member">
+        <div class="member-photo">
+          <?php if ($member['foto']): ?>
+            <img src="../../../assets/img/<?= htmlspecialchars($member['foto']) ?>" alt="<?= htmlspecialchars($member['nama_lengkap']) ?>" onerror="this.src='../../../assets/img/default.jpg'">
+          <?php else: ?>
+            <img src="../../../assets/img/default.jpg" alt="Default">
+          <?php endif; ?>
+
+        </div>
+
+        <h3 class="member-name"><?= htmlspecialchars($member['nama_lengkap']) ?></h3>
+
+        <?php if ($member['bidang_riset']): ?>
+          <div class="tags">
+            <?php foreach (explode(', ', $member['bidang_riset']) as $b): ?>
+              <span class="tag"><?= htmlspecialchars($b) ?></span>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+      </a>
+    <?php endforeach; ?>
+  </div>
+<?php else: ?>
+  <div class="no-results">
+    <p>Tidak ada anggota ditemukan untuk bidang riset ini.</p>
+  </div>
+<?php endif; ?>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    lucide.createIcons();
+  });
+</script>
 </body>
 
 </html>
+
+<?php pg_close($conn); ?>

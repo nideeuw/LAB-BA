@@ -253,7 +253,7 @@
             'url' => '#',
             'submenu' => [
                 'visi-misi' => ['label' => 'Visi & Misi', 'url' => 'app/views/visi-misi.php'],
-                'struktur-organisasi' => ['label' => 'Structure Organization', 'url' => 'app/views/struktur-organisasi.php']
+                'struktur-organisasi' => ['label' => 'Structure Organization', 'url' => 'members.php']
             ]
         ],
         'news' => ['label' => 'NEWS & ACTIVITY', 'url' => 'app/views/news.php'],
