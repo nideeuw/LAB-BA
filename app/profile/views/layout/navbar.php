@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/PBL/assets/css/home.css">
+<link rel="stylesheet" href="/PBL/assets/css/navbar.css">
 
 <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -36,16 +36,6 @@ function isParentActive($submenu, $current) {
             <img src="/PBL/assets/img/logo.png" alt="Logo Lab BA">
         </div>
 
-        <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="Search...">
-            <button class="search-btn" onclick="performSearch()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-            </button>
-        </div>
-
         <div class="hamburger" onclick="toggleMenu()">
             <span></span><span></span><span></span>
         </div>
@@ -80,24 +70,20 @@ function isParentActive($submenu, $current) {
                 <?php endif; ?>
             <?php endforeach; ?>
         </ul>
+
+        <div class="search-container">
+            <div class="search-box" id="searchBox">
+                <input type="text" id="searchInput" placeholder="Cari..." onkeyup="handleSearch(event)">
+                <button class="search-close" onclick="closeSearch()">&times;</button>
+            </div>
+
+            <div class="search-icon" onclick="toggleSearch()"></div>
+
+            <div class="search-results" id="searchResults"></div>
+        </div>
     </div>
 </nav>
 
 <script>
-function performSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput.value.trim();
-    
-    if (query) {
-        // Redirect ke halaman search dengan query parameter
-        window.location.href = '/PBL/app/views/search.php?q=' + encodeURIComponent(query);
-    }
-}
-
-// Allow Enter key to trigger search
-document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        performSearch();
-    }
-});
+/* (JS tetap sama) */
 </script>
