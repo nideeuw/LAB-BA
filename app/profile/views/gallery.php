@@ -5,12 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery - Laboratorium Business Analytics</title>
-  <link rel="stylesheet" href="../../../assets/css/gallery.css">
+  <link rel="stylesheet" href="/PBL/assets/css/gallery.css">
 </head>
 
 <body>
-
-
+<?php include __DIR__ . '/layout/navbar.php'; ?>
   <!-- Main Content -->
   <div class="container">
     <h1>Gallery</h1>
@@ -119,5 +118,7 @@
     });
   </script>
 </body>
-
+<?php 
+include __DIR__ . '/layout/footer.php'; 
+?>
 </html>

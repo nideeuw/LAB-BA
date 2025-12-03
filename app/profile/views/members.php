@@ -194,7 +194,9 @@ if ($members) {
   });
 </script>
 </body>
-
+<?php 
+include __DIR__ . '/layout/footer.php'; 
+?>
 </html>
 
 <?php pg_close($conn); ?>

@@ -140,7 +140,7 @@ $total_publikasi = count($publikasi_list);
 
     <!-- Publikasi -->
     <div class="publications-card">
-      <h3 class="publications-title">Publikasi (<?= $total_publikasi ?>)</h3>
+      <h3 class="publications-title">Publikasi </h3>
 
       <?php if (!empty($publikasi_list)): ?>
         <div class="publications-table-wrapper">
