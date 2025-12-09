@@ -51,7 +51,7 @@ class MembersController extends Controller
     {
         // Get ID from params
         $id = $params['id'] ?? 0;
-        
+
         if ($id === 0) {
             redirect('/members');
             return;
@@ -65,14 +65,28 @@ class MembersController extends Controller
             return;
         }
 
+        $publikasi_list = [];
+        if (!empty($memberDetail['publikasi_list'])) {
+            foreach ($memberDetail['publikasi_list'] as $pub) {
+                $publikasi_list[] = [
+                    'id' => $pub['id'] ?? null,
+                    'judul' => $pub['title'] ?? $pub['judul'] ?? '',
+                    'tahun' => $pub['year'] ?? $pub['tahun'] ?? '',
+                    'kategori' => $pub['kategori_publikasi'] ?? $pub['kategori'] ?? '-',
+                    'journal_name' => $pub['journal_name'] ?? '',
+                    'journal_link' => $pub['journal_link'] ?? ''
+                ];
+            }
+        }
+
         // Pass data to view
         $data = [
             'page_title' => $memberDetail['nama_lengkap'] . ' - Profile',
             'base_url' => getBaseUrl(),
             'member' => $memberDetail,
             'bidang_riset' => $memberDetail['bidang_riset'],
-            'publikasi_list' => $memberDetail['publikasi_list'],
-            'total_publikasi' => $memberDetail['total_publikasi'],
+            'publikasi_list' => $publikasi_list,  // Use transformed data
+            'total_publikasi' => count($publikasi_list),
             'conn' => $conn
         ];
 

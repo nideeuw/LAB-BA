@@ -50,6 +50,22 @@ $router->add('/cms/members/edit/{id}', 'cms/Members/edit');
 $router->add('/cms/members/update/{id}', 'cms/Members/update');
 $router->add('/cms/members/delete', 'cms/Members/delete');
 
+// Publications Management
+$router->add('/cms/publications', 'cms/Publications/index');
+$router->add('/cms/publications/add', 'cms/Publications/add');
+$router->add('/cms/publications/store', 'cms/Publications/store');
+$router->add('/cms/publications/edit/{id}', 'cms/Publications/edit');
+$router->add('/cms/publications/update/{id}', 'cms/Publications/update');
+$router->add('/cms/publications/delete/{id}', 'cms/Publications/delete');
+
+// Researches Management
+$router->add('/cms/researches', 'cms/Researches/index');
+$router->add('/cms/researches/add', 'cms/Researches/add');
+$router->add('/cms/researches/store', 'cms/Researches/store');
+$router->add('/cms/researches/edit/{id}', 'cms/Researches/edit');
+$router->add('/cms/researches/update/{id}', 'cms/Researches/update');
+$router->add('/cms/researches/delete/{id}', 'cms/Researches/delete');
+
 // Gallery Management
 $router->add('/cms/gallery', 'cms/Gallery/index');
 $router->add('/cms/gallery/add', 'cms/Gallery/add');

@@ -89,8 +89,16 @@ include __DIR__ . '/layout/navbar.php';
                                 <?php foreach ($publikasi_list as $index => $pub): ?>
                                     <tr>
                                         <td class="col-no"><?php echo $index + 1; ?></td>
-                                        <td class="col-judul"><?php echo htmlspecialchars($pub['judul']); ?></td>
-                                        <td class="col-tahun"><?php echo htmlspecialchars($pub['tahun']); ?></td>
+                                        <td class="col-judul">
+                                            <?php
+                                            echo !empty($pub['judul']) ? htmlspecialchars($pub['judul']) : '-';
+                                            ?>
+                                        </td>
+                                        <td class="col-tahun">
+                                            <?php
+                                            echo !empty($pub['tahun']) ? htmlspecialchars((string)$pub['tahun']) : '-';
+                                            ?>
+                                        </td>
                                         <td class="col-kategori">
                                             <?php
                                             if (!empty($pub['kategori']) && $pub['kategori'] !== '-') {
