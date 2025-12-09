@@ -46,10 +46,10 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 <td><?php echo $item['id']; ?></td>
                                                 <td>
                                                     <?php if (!empty($item['image'])): ?>
-                                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>"
+                                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($item['image']); ?>"
                                                             class="img-thumbnail"
                                                             style="width: 120px; height: 80px; object-fit: cover; cursor: pointer;"
-                                                            onclick="showImageModal('<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>')">
+                                                            onclick="showImageModal('<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($item['image']); ?>')">
                                                     <?php else: ?>
                                                         <div class="bg-light d-flex align-items-center justify-content-center" style="width: 120px; height: 80px;">
                                                             <i class="ti ti-photo text-muted" style="font-size: 32px;"></i>

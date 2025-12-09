@@ -9,7 +9,7 @@ $bannerItems = BannerModel::getActiveBanner($conn);
             <?php foreach ($bannerItems as $index => $banner): ?>
                 <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
                     <img class="d-block w-100"
-                        src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($banner['image']); ?>"
+                        src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($banner['image']); ?>"
                         alt="<?php echo htmlspecialchars($banner['title'] ?? 'Banner ' . ($index + 1)); ?>"
                         onerror="this.src='<?php echo $base_url; ?>/assets/img/default-banner.jpg'">
                 </div>

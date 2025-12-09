@@ -32,7 +32,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                 <div class="mb-3">
                                     <label class="form-label">Current Banner</label>
                                     <div>
-                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($banner['image']); ?>"
+                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($banner['image']); ?>"
                                             alt="Current Banner"
                                             class="img-thumbnail"
                                             style="max-width: 100%; max-height: 400px; object-fit: contain;">

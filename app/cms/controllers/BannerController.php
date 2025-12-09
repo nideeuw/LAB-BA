@@ -120,7 +120,7 @@ class BannerController extends Controller
                 // Delete old image
                 $oldBanner = BannerModel::getBannerById($id, $conn);
                 if (!empty($oldBanner['image'])) {
-                    $oldImagePath = ROOT_PATH . 'public/' . $oldBanner['image'];
+                    $oldImagePath = ROOT_PATH . 'assets/' . $oldBanner['image'];
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
                     }

@@ -129,7 +129,7 @@ class BannerModel
 
             // Delete image file if exists
             if ($result && !empty($banner['image'])) {
-                $imagePath = ROOT_PATH . 'public/' . $banner['image'];
+                $imagePath = ROOT_PATH . 'assets/' . $banner['image'];
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
@@ -170,7 +170,7 @@ class BannerModel
             }
 
             // Create upload directory structure
-            $uploadDir = ROOT_PATH . 'public/uploads/banner/' . date('Y/m');
+            $uploadDir = ROOT_PATH . 'assets/uploads/banner/' . date('Y/m');
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
