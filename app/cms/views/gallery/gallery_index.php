@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Gallery List View
+ * Gallery List View - FIXED IMAGE DISPLAY
  * File: app/cms/views/gallery/gallery_index.php
  */
 
@@ -64,11 +64,12 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 <td><?php echo $item['id']; ?></td>
                                                 <td>
                                                     <?php if (!empty($item['image'])): ?>
-                                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>"
+                                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($item['image']); ?>"
                                                             alt="<?php echo htmlspecialchars($item['title']); ?>"
                                                             class="img-thumbnail"
                                                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
-                                                            onclick="showImageModal('<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>', '<?php echo htmlspecialchars($item['title']); ?>')">
+                                                            onclick="showImageModal('<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($item['image']); ?>', '<?php echo htmlspecialchars($item['title']); ?>')"
+                                                            onerror="this.src='<?php echo $base_url; ?>/assets/img/default-gallery.jpg'">
                                                     <?php else: ?>
                                                         <div class="bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
                                                             <i class="ti ti-photo text-muted" style="font-size: 32px;"></i>

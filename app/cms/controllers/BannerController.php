@@ -2,7 +2,7 @@
 
 class BannerController extends Controller
 {
-    public function index($conn)
+    public function index($conn, $params = [])
     {
         checkLogin();
 
@@ -19,7 +19,7 @@ class BannerController extends Controller
         $this->view('cms/views/banner/banner_index', $data);
     }
 
-    public function add($conn)
+    public function add($conn, $params = [])
     {
         checkLogin();
 
@@ -33,7 +33,7 @@ class BannerController extends Controller
         $this->view('cms/views/banner/banner_create', $data);
     }
 
-    public function store($conn)
+    public function store($conn, $params = [])
     {
         checkLogin();
 
@@ -43,13 +43,11 @@ class BannerController extends Controller
 
         $errors = [];
 
-        if (empty($_POST['title'])) {
-            $errors[] = 'Title is required';
-        }
-
-        // Validate image upload
+        // Validate image upload (REQUIRED)
         $imagePath = null;
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            $errors[] = 'Image is required';
+        } else {
             $imagePath = BannerModel::uploadImage($_FILES['image']);
             if (!$imagePath) {
                 $errors[] = 'Failed to upload image. Please check file type and size (max 5MB)';
@@ -69,22 +67,24 @@ class BannerController extends Controller
         $result = BannerModel::createBanner($bannerData, $conn);
 
         if ($result) {
-            setFlash('success', 'Banner item created successfully!');
+            setFlash('success', 'Banner created successfully!');
             redirect('/cms/banner');
         } else {
-            setFlash('danger', 'Failed to create banner item');
+            setFlash('danger', 'Failed to create banner');
             redirect('/cms/banner/add');
         }
     }
 
-    public function edit($conn, $id)
+    public function edit($conn, $params = [])
     {
         checkLogin();
+
+        $id = $params['id'] ?? 0;
 
         $banner = BannerModel::getBannerById($id, $conn);
 
         if (!$banner) {
-            setFlash('danger', 'Banner item not found');
+            setFlash('danger', 'Banner not found');
             redirect('/cms/banner');
         }
 
@@ -99,23 +99,14 @@ class BannerController extends Controller
         $this->view('cms/views/banner/banner_edit', $data);
     }
 
-    public function update($conn, $id)
+    public function update($conn, $params = [])
     {
         checkLogin();
 
+        $id = $params['id'] ?? 0;
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/cms/banner');
-        }
-
-        $errors = [];
-
-        if (empty($_POST['title'])) {
-            $errors[] = 'Title is required';
-        }
-
-        if (!empty($errors)) {
-            setFlash('danger', implode('<br>', $errors));
-            redirect('/cms/banner/edit/' . $id);
         }
 
         $bannerData = [
@@ -141,24 +132,26 @@ class BannerController extends Controller
         $result = BannerModel::updateBanner($id, $bannerData, $conn);
 
         if ($result) {
-            setFlash('success', 'Banner item updated successfully!');
+            setFlash('success', 'Banner updated successfully!');
             redirect('/cms/banner');
         } else {
-            setFlash('danger', 'Failed to update banner item');
+            setFlash('danger', 'Failed to update banner');
             redirect('/cms/banner/edit/' . $id);
         }
     }
 
-    public function delete($conn, $id)
+    public function delete($conn, $params = [])
     {
         checkLogin();
+
+        $id = $params['id'] ?? 0;
 
         $result = BannerModel::deleteBanner($id, $conn);
 
         if ($result) {
-            setFlash('success', 'Banner item deleted successfully!');
+            setFlash('success', 'Banner deleted successfully!');
         } else {
-            setFlash('danger', 'Failed to delete banner item');
+            setFlash('danger', 'Failed to delete banner');
         }
 
         redirect('/cms/banner');

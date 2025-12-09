@@ -8,7 +8,7 @@ class BannerModel
     public static function getAllBanner($conn)
     {
         try {
-            $query = 'SELECT * FROM banner ORDER BY date DESC, created_on DESC';
+            $query = 'SELECT * FROM banner ORDER BY created_on DESC';
             $stmt = $conn->query($query);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -23,7 +23,7 @@ class BannerModel
     public static function getActiveBanner($conn)
     {
         try {
-            $query = 'SELECT * FROM banner WHERE is_active = TRUE ORDER BY date DESC';
+            $query = 'SELECT * FROM banner WHERE is_active = TRUE ORDER BY created_on DESC';
             $stmt = $conn->query($query);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -97,7 +97,7 @@ class BannerModel
 
             $params = [
                 'id' => $id,
-                'is_active' => $data['is_active'] ?? true,
+                'is_active' => $data['is_active'] ? 'true' : 'false',
                 'modified_by' => $_SESSION['user_name'] ?? 'system'
             ];
 

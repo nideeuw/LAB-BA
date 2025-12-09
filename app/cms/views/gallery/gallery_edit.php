@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Gallery Edit View
+ * Gallery Edit View - FIXED CHECKBOX
  * File: app/cms/views/gallery/gallery_edit.php
  */
 
@@ -47,19 +47,18 @@ include __DIR__ . '/../layout/sidebar.php';
                                 <div class="mb-3">
                                     <label class="form-label">Current Image</label>
                                     <div>
-                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($gallery['image']); ?>"
+                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($gallery['image']); ?>"
                                             alt="<?php echo htmlspecialchars($gallery['title']); ?>"
                                             class="img-thumbnail"
-                                            style="max-width: 300px; max-height: 300px; object-fit: contain;">
+                                            style="max-width: 300px; max-height: 300px; object-fit: contain;"
+                                            onerror="this.src='<?php echo $base_url; ?>/assets/img/default-gallery.jpg'">
                                     </div>
                                 </div>
                             <?php endif; ?>
 
                             <!-- New Image Upload -->
                             <div class="mb-3">
-                                <label for="image" class="form-label">
-                                    Change Image
-                                </label>
+                                <label for="image" class="form-label">Change Image</label>
                                 <input type="file"
                                     class="form-control"
                                     id="image"
@@ -111,18 +110,30 @@ include __DIR__ . '/../layout/sidebar.php';
                                     placeholder="Enter description (optional)"><?php echo htmlspecialchars($gallery['description'] ?? ''); ?></textarea>
                             </div>
 
-                            <!-- Active Status -->
                             <div class="mb-3">
                                 <div class="form-check form-switch">
+                                    <!-- Hidden input: always sends value -->
+                                    <input type="hidden" name="is_active" value="0">
+
+                                    <!-- Checkbox with value="1" -->
                                     <input class="form-check-input"
                                         type="checkbox"
                                         id="is_active"
                                         name="is_active"
+                                        value="1"
                                         <?php echo $gallery['is_active'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="is_active">
                                         Active (Visible on public gallery)
                                     </label>
                                 </div>
+                                <small class="text-muted">
+                                    Current status:
+                                    <?php if ($gallery['is_active']): ?>
+                                        <span class="badge bg-success">Active</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-danger">Inactive</span>
+                                    <?php endif; ?>
+                                </small>
                             </div>
 
                             <!-- Form Actions -->
@@ -198,54 +209,60 @@ include __DIR__ . '/../layout/sidebar.php';
 </div>
 
 <?php
-// Page specific scripts
+// Page specific scripts - NO JQUERY NEEDED!
 $page_scripts = '
 <script>
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
     // Image preview
-    $("#image").on("change", function(e) {
-        let file = e.target.files[0];
-        
-        if (file) {
-            // Check file size (5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File size must be less than 5MB!");
-                $(this).val("");
-                $("#imagePreview").hide();
-                return;
-            }
+    const imageInput = document.getElementById("image");
+    if (imageInput) {
+        imageInput.addEventListener("change", function(e) {
+            let file = e.target.files[0];
+            
+            if (file) {
+                // Check file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("File size must be less than 5MB!");
+                    this.value = "";
+                    document.getElementById("imagePreview").style.display = "none";
+                    return;
+                }
 
-            // Check file type
-            let allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
-            if (!allowedTypes.includes(file.type)) {
-                alert("Invalid file type! Only JPG, PNG, GIF, and WEBP are allowed.");
-                $(this).val("");
-                $("#imagePreview").hide();
-                return;
-            }
+                // Check file type
+                let allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+                if (!allowedTypes.includes(file.type)) {
+                    alert("Invalid file type! Only JPG, PNG, GIF, and WEBP are allowed.");
+                    this.value = "";
+                    document.getElementById("imagePreview").style.display = "none";
+                    return;
+                }
 
-            // Show preview
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                $("#previewImg").attr("src", e.target.result);
-                $("#imagePreview").show();
-            };
-            reader.readAsDataURL(file);
-        } else {
-            $("#imagePreview").hide();
-        }
-    });
+                // Show preview
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("previewImg").src = e.target.result;
+                    document.getElementById("imagePreview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById("imagePreview").style.display = "none";
+            }
+        });
+    }
 
     // Form validation
-    $("#galleryForm").on("submit", function(e) {
-        let title = $("#title").val().trim();
+    const form = document.getElementById("galleryForm");
+    if (form) {
+        form.addEventListener("submit", function(e) {
+            let title = document.getElementById("title").value.trim();
 
-        if (!title) {
-            e.preventDefault();
-            alert("Please enter a title!");
-            return false;
-        }
-    });
+            if (!title) {
+                e.preventDefault();
+                alert("Please enter a title!");
+                return false;
+            }
+        });
+    }
 });
 </script>
 ';

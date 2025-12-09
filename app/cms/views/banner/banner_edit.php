@@ -1,114 +1,62 @@
 <?php
-
-/**
- * Banner Edit View
- * File: app/cms/views/banner/banner_edit.php
- */
-
-// SET PAGE TITLE
 $page_title = 'Edit Banner';
-
-// Include layout
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
 ?>
 
-<!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pc-content">
-
-        <!-- [ breadcrumb ] start -->
         <?php include __DIR__ . '/../layout/breadcrumb.php'; ?>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- Flash Message -->
         <?php
         $flash = getFlash();
         if ($flash):
         ?>
             <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show" role="alert">
                 <?php echo $flash['message']; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <!-- [ Main Content ] start -->
         <div class="row">
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Edit Banner: <?php echo htmlspecialchars($banner['title']); ?></h5>
+                        <h5 class="mb-0">Edit Banner #<?php echo $banner['id']; ?></h5>
                     </div>
                     <div class="card-body">
-                        <form action="<?php echo $base_url; ?>/cms/banner/update/<?php echo $banner['id']; ?>" method="POST" enctype="multipart/form-data" id="bannerForm">
+                        <form action="<?php echo $base_url; ?>/cms/banner/update/<?php echo $banner['id']; ?>" method="POST" enctype="multipart/form-data">
 
                             <!-- Current Image -->
                             <?php if (!empty($banner['image'])): ?>
                                 <div class="mb-3">
-                                    <label class="form-label">Current Image</label>
+                                    <label class="form-label">Current Banner</label>
                                     <div>
                                         <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($banner['image']); ?>"
-                                            alt="<?php echo htmlspecialchars($banner['title']); ?>"
+                                            alt="Current Banner"
                                             class="img-thumbnail"
-                                            style="max-width: 300px; max-height: 300px; object-fit: contain;">
+                                            style="max-width: 100%; max-height: 400px; object-fit: contain;">
                                     </div>
                                 </div>
                             <?php endif; ?>
 
                             <!-- New Image Upload -->
                             <div class="mb-3">
-                                <label for="image" class="form-label">
-                                    Change Image
-                                </label>
+                                <label for="image" class="form-label">Change Banner Image</label>
                                 <input type="file"
                                     class="form-control"
                                     id="image"
                                     name="image"
                                     accept="image/*">
-                                <small class="text-muted">Leave empty to keep current image. Max 5MB. Accepted: JPG, PNG, GIF, WEBP</small>
+                                <small class="text-muted">Leave empty to keep current image. Max 5MB.</small>
 
                                 <!-- Image Preview -->
                                 <div id="imagePreview" class="mt-3" style="display: none;">
                                     <label class="form-label">New Image Preview:</label>
                                     <div>
-                                        <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 300px; max-height: 300px;">
+                                        <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-width: 100%; max-height: 400px;">
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Title -->
-                            <div class="mb-3">
-                                <label for="title" class="form-label">
-                                    Title <span class="text-danger">*</span>
-                                </label>
-                                <input type="text"
-                                    class="form-control"
-                                    id="title"
-                                    name="title"
-                                    value="<?php echo htmlspecialchars($banner['title']); ?>"
-                                    required
-                                    placeholder="Enter image title">
-                            </div>
-
-                            <!-- Date -->
-                            <div class="mb-3">
-                                <label for="date" class="form-label">Date</label>
-                                <input type="date"
-                                    class="form-control"
-                                    id="date"
-                                    name="date"
-                                    value="<?php echo !empty($banner['date']) ? date('Y-m-d', strtotime($banner['date'])) : ''; ?>">
-                                <small class="text-muted">Date when photo was taken</small>
-                            </div>
-
-                            <!-- Description -->
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control"
-                                    id="description"
-                                    name="description"
-                                    rows="4"
-                                    placeholder="Enter description (optional)"><?php echo htmlspecialchars($banner['description'] ?? ''); ?></textarea>
                             </div>
 
                             <!-- Active Status -->
@@ -120,7 +68,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                         name="is_active"
                                         <?php echo $banner['is_active'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="is_active">
-                                        Active (Visible on public banner)
+                                        Active (Show on homepage)
                                     </label>
                                 </div>
                             </div>
@@ -135,7 +83,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </a>
                                 <a href="<?php echo $base_url; ?>/cms/banner/delete/<?php echo $banner['id']; ?>"
                                     class="btn btn-danger ms-auto"
-                                    onclick="return confirm('Are you sure you want to delete this banner item?')">
+                                    onclick="return confirm('Delete this banner?')">
                                     <i class="ti ti-trash"></i> Delete
                                 </a>
                             </div>
@@ -143,112 +91,39 @@ include __DIR__ . '/../layout/sidebar.php';
                         </form>
                     </div>
                 </div>
-
-                <!-- Banner Info -->
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h6 class="mb-3">Banner Information</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>ID:</strong> <?php echo $banner['id']; ?></p>
-                                <p class="mb-2"><strong>Created By:</strong> <?php echo htmlspecialchars($banner['created_by'] ?? '-'); ?></p>
-                                <p class="mb-2"><strong>Created On:</strong>
-                                    <?php echo !empty($banner['created_on']) ? date('d M Y H:i', strtotime($banner['created_on'])) : '-'; ?>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <?php if (!empty($banner['image'])): ?>
-                                    <p class="mb-2"><strong>Image Path:</strong>
-                                        <code><?php echo htmlspecialchars($banner['image']); ?></code>
-                                    </p>
-                                <?php endif; ?>
-                                <p class="mb-2"><strong>Modified By:</strong>
-                                    <?php echo htmlspecialchars($banner['modified_by'] ?? '-'); ?>
-                                </p>
-                                <p class="mb-2"><strong>Modified On:</strong>
-                                    <?php echo !empty($banner['modified_on']) ? date('d M Y H:i', strtotime($banner['modified_on'])) : '-'; ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Help Card -->
-            <div class="col-lg-4">
-                <div class="card bg-light-warning">
-                    <div class="card-body">
-                        <h5 class="mb-3">
-                            <i class="ti ti-alert-triangle"></i> Important Notes
-                        </h5>
-
-                        <ul class="mb-0">
-                            <li>Uploading new image will replace the current one</li>
-                            <li>Old image will be deleted from server</li>
-                            <li>Leave image field empty to keep current image</li>
-                            <li>Deleting this item will also delete the image file</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
-        <!-- [ Main Content ] end -->
-
     </div>
 </div>
 
 <?php
-// Page specific scripts
 $page_scripts = '
 <script>
-$(document).ready(function() {
-    // Image preview
-    $("#image").on("change", function(e) {
-        let file = e.target.files[0];
-        
-        if (file) {
-            // Check file size (5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File size must be less than 5MB!");
-                $(this).val("");
-                $("#imagePreview").hide();
-                return;
+document.addEventListener("DOMContentLoaded", function() {
+    const imageInput = document.getElementById("image");
+    if (imageInput) {
+        imageInput.addEventListener("change", function(e) {
+            let file = e.target.files[0];
+            
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("File size must be less than 5MB!");
+                    this.value = "";
+                    document.getElementById("imagePreview").style.display = "none";
+                    return;
+                }
+
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("previewImg").src = e.target.result;
+                    document.getElementById("imagePreview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
             }
-
-            // Check file type
-            let allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
-            if (!allowedTypes.includes(file.type)) {
-                alert("Invalid file type! Only JPG, PNG, GIF, and WEBP are allowed.");
-                $(this).val("");
-                $("#imagePreview").hide();
-                return;
-            }
-
-            // Show preview
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                $("#previewImg").attr("src", e.target.result);
-                $("#imagePreview").show();
-            };
-            reader.readAsDataURL(file);
-        } else {
-            $("#imagePreview").hide();
-        }
-    });
-
-    // Form validation
-    $("#bannerForm").on("submit", function(e) {
-        let title = $("#title").val().trim();
-
-        if (!title) {
-            e.preventDefault();
-            alert("Please enter a title!");
-            return false;
-        }
-    });
+        });
+    }
 });
 </script>
 ';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

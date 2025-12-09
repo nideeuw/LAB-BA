@@ -43,7 +43,10 @@
                         $isActive = ($active_page == $item['slug']) ? 'active' : '';
 
                         // Generate URL
-                        if (!empty($item['menu_url'])) {
+                        if ($hasChildren) {
+                            // Dropdown - tidak ada URL, hanya toggle
+                            $url = 'javascript:void(0);';
+                        } elseif (!empty($item['menu_url'])) {
                             // Jika ada menu_url, cek apakah external atau internal
                             if (filter_var($item['menu_url'], FILTER_VALIDATE_URL)) {
                                 // External URL (http/https)
@@ -52,9 +55,12 @@
                                 // Internal URL
                                 $url = $base_url . '/' . ltrim($item['menu_url'], '/');
                             }
-                        } else {
-                            // Jika tidak ada menu_url, gunakan slug
+                        } elseif (!empty($item['slug'])) {
+                            // Jika tidak ada menu_url tapi ada slug
                             $url = $base_url . '/cms/' . $item['slug'];
+                        } else {
+                            // Fallback: no link
+                            $url = 'javascript:void(0);';
                         }
 
                         $liClass = 'pc-item';

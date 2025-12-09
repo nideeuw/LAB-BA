@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Gallery Create View
+ * Gallery Create View - FIXED CHECKBOX
  * File: app/cms/views/gallery/gallery_create.php
  */
 
@@ -95,13 +95,17 @@ include __DIR__ . '/../layout/sidebar.php';
                                     placeholder="Enter description (optional)"></textarea>
                             </div>
 
-                            <!-- Active Status -->
                             <div class="mb-3">
                                 <div class="form-check form-switch">
+                                    <!-- Hidden input: always sends value -->
+                                    <input type="hidden" name="is_active" value="0">
+
+                                    <!-- Checkbox with value="1" -->
                                     <input class="form-check-input"
                                         type="checkbox"
                                         id="is_active"
                                         name="is_active"
+                                        value="1"
                                         checked>
                                     <label class="form-check-label" for="is_active">
                                         Active (Visible on public gallery)
@@ -160,7 +164,7 @@ include __DIR__ . '/../layout/sidebar.php';
                 <div class="card mt-3 bg-light-warning">
                     <div class="card-body">
                         <h6 class="mb-2"><i class="ti ti-alert-triangle"></i> Important</h6>
-                        <p class="mb-0 small">Images are stored in <code>/public/uploads/gallery/</code> directory. Make sure this folder is writable.</p>
+                        <p class="mb-0 small">Images are stored in <code>assets/uploads/gallery/</code> directory. Make sure this folder is writable.</p>
                     </div>
                 </div>
             </div>
@@ -171,60 +175,66 @@ include __DIR__ . '/../layout/sidebar.php';
 </div>
 
 <?php
-// Page specific scripts
+// Page specific scripts - NO JQUERY NEEDED!
 $page_scripts = '
 <script>
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
     // Image preview
-    $("#image").on("change", function(e) {
-        let file = e.target.files[0];
-        
-        if (file) {
-            // Check file size (5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File size must be less than 5MB!");
-                $(this).val("");
-                $("#imagePreview").hide();
-                return;
-            }
+    const imageInput = document.getElementById("image");
+    if (imageInput) {
+        imageInput.addEventListener("change", function(e) {
+            let file = e.target.files[0];
+            
+            if (file) {
+                // Check file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("File size must be less than 5MB!");
+                    this.value = "";
+                    document.getElementById("imagePreview").style.display = "none";
+                    return;
+                }
 
-            // Show preview
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                $("#previewImg").attr("src", e.target.result);
-                $("#imagePreview").show();
-            };
-            reader.readAsDataURL(file);
-        } else {
-            $("#imagePreview").hide();
-        }
-    });
+                // Show preview
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("previewImg").src = e.target.result;
+                    document.getElementById("imagePreview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById("imagePreview").style.display = "none";
+            }
+        });
+    }
 
     // Form validation
-    $("#galleryForm").on("submit", function(e) {
-        let image = $("#image")[0].files[0];
-        let title = $("#title").val().trim();
+    const form = document.getElementById("galleryForm");
+    if (form) {
+        form.addEventListener("submit", function(e) {
+            let image = document.getElementById("image").files[0];
+            let title = document.getElementById("title").value.trim();
 
-        if (!image) {
-            e.preventDefault();
-            alert("Please select an image!");
-            return false;
-        }
+            if (!image) {
+                e.preventDefault();
+                alert("Please select an image!");
+                return false;
+            }
 
-        if (!title) {
-            e.preventDefault();
-            alert("Please enter a title!");
-            return false;
-        }
+            if (!title) {
+                e.preventDefault();
+                alert("Please enter a title!");
+                return false;
+            }
 
-        // Check file type
-        let allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
-        if (!allowedTypes.includes(image.type)) {
-            e.preventDefault();
-            alert("Invalid file type! Only JPG, PNG, GIF, and WEBP are allowed.");
-            return false;
-        }
-    });
+            // Check file type
+            let allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+            if (!allowedTypes.includes(image.type)) {
+                e.preventDefault();
+                alert("Invalid file type! Only JPG, PNG, GIF, and WEBP are allowed.");
+                return false;
+            }
+        });
+    }
 });
 </script>
 ';

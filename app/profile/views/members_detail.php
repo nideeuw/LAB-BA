@@ -5,7 +5,6 @@
  * File: app/profile/views/members_detail.php
  */
 
-// Include navbar SEBELUM DOCTYPE
 include __DIR__ . '/layout/navbar.php';
 ?>
 
@@ -35,7 +34,6 @@ include __DIR__ . '/layout/navbar.php';
                     <!-- Foto -->
                     <div class="profile-banner-photo">
                         <?php
-                        // ✅ SIMPLIFIED: All photos now in assets/
                         $fotoPath = !empty($member['foto']) ? $member['foto'] : 'img/default.jpg';
                         ?>
                         <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($fotoPath); ?>"

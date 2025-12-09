@@ -3,7 +3,7 @@
 class GalleryModel
 {
     /**
-     * Get all gallery items
+     * Get all gallery items (for CMS)
      */
     public static function getAllGallery($conn)
     {
@@ -23,7 +23,7 @@ class GalleryModel
     public static function getActiveGallery($conn)
     {
         try {
-            $query = 'SELECT * FROM gallery WHERE is_active = TRUE ORDER BY date DESC';
+            $query = 'SELECT * FROM gallery WHERE is_active = TRUE ORDER BY date DESC, created_on DESC';
             $stmt = $conn->query($query);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -108,7 +108,7 @@ class GalleryModel
                 'title' => $data['title'],
                 'date' => $data['date'] ?? null,
                 'description' => $data['description'] ?? null,
-                'is_active' => $data['is_active'] ?? true,
+                'is_active' => $data['is_active'] ? 'true' : 'false',
                 'modified_by' => $_SESSION['user_name'] ?? 'system'
             ];
 
@@ -140,7 +140,7 @@ class GalleryModel
 
             // Delete image file if exists
             if ($result && !empty($gallery['image'])) {
-                $imagePath = ROOT_PATH . 'public/' . $gallery['image'];
+                $imagePath = ROOT_PATH . 'assets/' . $gallery['image'];
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }
@@ -156,6 +156,7 @@ class GalleryModel
     /**
      * Upload and save image
      * Returns: image path or false
+     * 
      */
     public static function uploadImage($file)
     {
@@ -180,8 +181,7 @@ class GalleryModel
                 return false;
             }
 
-            // Create upload directory structure
-            $uploadDir = ROOT_PATH . 'public/uploads/gallery/' . date('Y/m');
+            $uploadDir = ROOT_PATH . 'assets/uploads/gallery';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -193,8 +193,7 @@ class GalleryModel
 
             // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                // Return relative path for database
-                return 'uploads/gallery/' . date('Y/m') . '/' . $filename;
+                return 'uploads/gallery/' . $filename;
             }
 
             return false;

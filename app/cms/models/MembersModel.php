@@ -354,7 +354,6 @@ class MembersModel
      * Upload and save member photo
      * Returns: image path or false
      * 
-     * ✅ UPLOADS TO: assets/uploads/members/
      */
     public static function uploadImage($file)
     {
@@ -379,7 +378,6 @@ class MembersModel
                 return false;
             }
 
-            // ✅ Upload to assets/uploads/members/
             $uploadDir = ROOT_PATH . 'assets/uploads/members';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
@@ -392,7 +390,6 @@ class MembersModel
 
             // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                // ✅ Return path: uploads/members/xxx.jpg
                 return 'uploads/members/' . $filename;
             }
 

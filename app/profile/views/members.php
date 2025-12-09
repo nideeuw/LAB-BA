@@ -4,7 +4,6 @@
  * File: app/profile/views/members.php
  */
 
-// Include navbar SEBELUM DOCTYPE
 include __DIR__ . '/layout/navbar.php';
 ?>
 
@@ -56,7 +55,6 @@ include __DIR__ . '/layout/navbar.php';
                     <div class="card-kepala-content">
                         <div class="card-kepala-photo">
                             <?php
-                            // ✅ SIMPLIFIED: All photos now in assets/
                             $fotoPath = !empty($kepala_lab['foto']) ? $kepala_lab['foto'] : 'img/default.jpg';
                             ?>
                             <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($fotoPath); ?>"
@@ -89,7 +87,6 @@ include __DIR__ . '/layout/navbar.php';
                     <a href="<?php echo $base_url; ?>/members/detail/<?php echo $member['id']; ?>" class="card-member">
                         <div class="member-photo">
                             <?php
-                            // ✅ SIMPLIFIED: All photos now in assets/
                             $fotoPath = !empty($member['foto']) ? $member['foto'] : 'img/default.jpg';
                             ?>
                             <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($fotoPath); ?>"

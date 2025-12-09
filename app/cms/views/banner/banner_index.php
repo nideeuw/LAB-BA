@@ -1,45 +1,30 @@
 <?php
-
-/**
- * Banner List View
- * File: app/cms/views/banner/banner_index.php
- */
-
-// SET PAGE TITLE
 $page_title = 'Banner Management';
-
-// Include layout
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
 ?>
 
-<!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pc-content">
-
-        <!-- [ breadcrumb ] start -->
         <?php include __DIR__ . '/../layout/breadcrumb.php'; ?>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- Flash Message -->
         <?php
         $flash = getFlash();
         if ($flash):
         ?>
             <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show" role="alert">
                 <?php echo $flash['message']; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <!-- [ Main Content ] start -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="mb-0">Banner List</h5>
                         <a href="<?php echo $base_url; ?>/cms/banner/add" class="btn btn-primary">
-                            <i class="ti ti-plus"></i> Add New Image
+                            <i class="ti ti-plus"></i> Add New Banner
                         </a>
                     </div>
                     <div class="card-body">
@@ -48,9 +33,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Image</th>
+                                        <th>Preview</th>
                                         <th>Status</th>
-                                        <th>Created By</th>
+                                        <th>Created</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
@@ -63,10 +48,10 @@ include __DIR__ . '/../layout/sidebar.php';
                                                     <?php if (!empty($item['image'])): ?>
                                                         <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>"
                                                             class="img-thumbnail"
-                                                            style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
-                                                            onclick="showImageModal('<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>', '<?php echo htmlspecialchars($item['title']); ?>')">
+                                                            style="width: 120px; height: 80px; object-fit: cover; cursor: pointer;"
+                                                            onclick="showImageModal('<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($item['image']); ?>')">
                                                     <?php else: ?>
-                                                        <div class="bg-light d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                                        <div class="bg-light d-flex align-items-center justify-content-center" style="width: 120px; height: 80px;">
                                                             <i class="ti ti-photo text-muted" style="font-size: 32px;"></i>
                                                         </div>
                                                     <?php endif; ?>
@@ -75,7 +60,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                                     <?php if ($item['is_active']): ?>
                                                         <span class="badge bg-success">Active</span>
                                                     <?php else: ?>
-                                                        <span class="badge bg-danger">Inactive</span>
+                                                        <span class="badge bg-secondary">Inactive</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
@@ -87,19 +72,14 @@ include __DIR__ . '/../layout/sidebar.php';
                                                     </small>
                                                 </td>
                                                 <td class="text-end">
-                                                    <div class="btn-group" role="group">
-                                                        <!-- Edit -->
+                                                    <div class="btn-group">
                                                         <a href="<?php echo $base_url; ?>/cms/banner/edit/<?php echo $item['id']; ?>"
-                                                            class="btn btn-sm btn-info"
-                                                            title="Edit">
+                                                            class="btn btn-sm btn-info" title="Edit">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
-
-                                                        <!-- Delete -->
                                                         <a href="<?php echo $base_url; ?>/cms/banner/delete/<?php echo $item['id']; ?>"
                                                             class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to delete this banner item?')"
-                                                            title="Delete">
+                                                            onclick="return confirm('Delete this banner?')" title="Delete">
                                                             <i class="ti ti-trash"></i>
                                                         </a>
                                                     </div>
@@ -108,14 +88,12 @@ include __DIR__ . '/../layout/sidebar.php';
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="8" class="text-center py-4">
-                                                <div class="text-muted">
-                                                    <i class="ti ti-photo f-40"></i>
-                                                    <p class="mt-2">No banner items found</p>
-                                                    <a href="<?php echo $base_url; ?>/cms/banner/add" class="btn btn-primary mt-2">
-                                                        <i class="ti ti-plus"></i> Add First Image
-                                                    </a>
-                                                </div>
+                                            <td colspan="5" class="text-center py-4">
+                                                <i class="ti ti-photo f-40 text-muted"></i>
+                                                <p class="mt-2">No banners found</p>
+                                                <a href="<?php echo $base_url; ?>/cms/banner/add" class="btn btn-primary mt-2">
+                                                    <i class="ti ti-plus"></i> Add First Banner
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -126,30 +104,26 @@ include __DIR__ . '/../layout/sidebar.php';
                 </div>
             </div>
         </div>
-        <!-- [ Main Content ] end -->
-
     </div>
 </div>
 
-<!-- Image Preview Modal -->
+<!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="imageModalTitle">Image Preview</h5>
+                <h5 class="modal-title">Banner Preview</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">
-                <img id="imageModalImg" src="" alt="" class="img-fluid" style="max-height: 70vh;">
+                <img id="imageModalImg" src="" alt="" class="img-fluid">
             </div>
         </div>
     </div>
 </div>
 
 <?php
-// Page specific scripts
 $page_scripts = '
-<!-- DataTables -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -157,26 +131,16 @@ $page_scripts = '
 <script>
 $(document).ready(function() {
     $("#bannerTable").DataTable({
-        order: [[0, "desc"]], // Sort by ID descending
-        pageLength: 25,
-        language: {
-            search: "Search banner:",
-            lengthMenu: "Show _MENU_ items per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ items",
-            infoEmpty: "No banner items found",
-            infoFiltered: "(filtered from _MAX_ total items)",
-            zeroRecords: "No matching banner items found"
-        }
+        order: [[0, "desc"]],
+        pageLength: 25
     });
 });
 
-function showImageModal(imageUrl, title) {
+function showImageModal(imageUrl) {
     $("#imageModalImg").attr("src", imageUrl);
-    $("#imageModalTitle").text(title);
     $("#imageModal").modal("show");
 }
 </script>
 ';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

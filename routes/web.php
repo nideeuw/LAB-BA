@@ -53,14 +53,18 @@ $router->add('/cms/members/delete', 'cms/Members/delete');
 // Gallery Management
 $router->add('/cms/gallery', 'cms/Gallery/index');
 $router->add('/cms/gallery/add', 'cms/Gallery/add');
+$router->add('/cms/gallery/store', 'cms/Gallery/store');
 $router->add('/cms/gallery/edit/{id}', 'cms/Gallery/edit');
-$router->add('/cms/gallery/delete', 'cms/Gallery/delete');
+$router->add('/cms/gallery/update/{id}', 'cms/Gallery/update');
+$router->add('/cms/gallery/delete/{id}', 'cms/Gallery/delete');
 
 // Banner Management
 $router->add('/cms/banner', 'cms/Banner/index');
 $router->add('/cms/banner/add', 'cms/Banner/add');
+$router->add('/cms/banner/store', 'cms/Banner/store');
 $router->add('/cms/banner/edit/{id}', 'cms/Banner/edit');
-$router->add('/cms/banner/delete', 'cms/Banner/delete');
+$router->add('/cms/banner/update/{id}', 'cms/Banner/update');
+$router->add('/cms/banner/delete/{id}', 'cms/Banner/delete');
 
 // News Activity Management
 $router->add('/cms/news-activity', 'cms/NewsActivity/index');
