@@ -1,12 +1,43 @@
+<?php
+
+/**
+ * Footer with Dynamic Contact Info
+ * File: app/profile/views/layout/footer.php
+ */
+
+// Get active contact info from database
+$contactInfo = null;
+if (isset($conn)) {
+    $contactInfo = ContactModel::getActiveContact($conn);
+}
+
+// Default values if no contact found
+$alamat = $contactInfo['alamat'] ?? 'Jl. Soekarno Hatta Malang';
+$no_telp = $contactInfo['no_telp'] ?? '+62 12 3456 7890';
+$email = $contactInfo['email'] ?? 'laboratoriumBA@polinema.ac.id';
+?>
+
 <footer>
     <div class="footer-container">
         <div class="footer-section">
             <h3>Information</h3>
             <ul class="contact-info">
-                <li><i class="fas fa-map-marker-alt"></i><span>Jl. Soekarno Hatta Malang</span></li>
-                <li><i class="fas fa-phone"></i><span>+62 12 3456 7890</span></li>
-                <li><i class="fas fa-envelope"></i><span>laboratoriumBA@polinema.ac.id</span></li>
-                <li><i class="fas fa-clock"></i><span>Senin - Jumat: 08.00 - 17.00 WIB</span></li>
+                <li>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span><?php echo htmlspecialchars($alamat); ?></span>
+                </li>
+                <li>
+                    <i class="fas fa-phone"></i>
+                    <span><?php echo htmlspecialchars($no_telp); ?></span>
+                </li>
+                <li>
+                    <i class="fas fa-envelope"></i>
+                    <span><?php echo htmlspecialchars($email); ?></span>
+                </li>
+                <li>
+                    <i class="fas fa-clock"></i>
+                    <span>Senin - Jumat: 08.00 - 17.00 WIB</span>
+                </li>
             </ul>
         </div>
 
@@ -61,4 +92,5 @@
 <div class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"></div>
 
 </body>
+
 </html>

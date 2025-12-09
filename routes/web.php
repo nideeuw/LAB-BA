@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Routes Configuration
  * File: routes/web.php
@@ -15,8 +16,8 @@ $router->add('/members/detail/{id}', 'profile/Members/detail');
 // ========== Rute CMS (Admin Panel) ==========
 
 // Authentication
-$router->add('/cms/login', 'cms/Auth/login'); 
-$router->add('/cms/logout', 'cms/Auth/logout'); 
+$router->add('/cms/login', 'cms/Auth/login');
+$router->add('/cms/logout', 'cms/Auth/logout');
 
 // Dashboard
 $router->add('/cms/dashboard', 'cms/Dashboard/index');
@@ -104,13 +105,14 @@ $router->add('/cms/visi-misi/edit/{id}', 'cms/VisiMisi/edit');
 
 // Contact Management
 $router->add('/cms/contact', 'cms/Contact/index');
-$router->add('/cms/contact/view', 'cms/Contact/view');
-$router->add('/cms/contact/reply', 'cms/Contact/reply');
-$router->add('/cms/contact/delete', 'cms/Contact/delete');
+$router->add('/cms/contact/add', 'cms/Contact/add');
+$router->add('/cms/contact/store', 'cms/Contact/store');
+$router->add('/cms/contact/edit/{id}', 'cms/Contact/edit');
+$router->add('/cms/contact/update/{id}', 'cms/Contact/update');
+$router->add('/cms/contact/delete/{id}', 'cms/Contact/delete');
+$router->add('/cms/contact/set-active/{id}', 'cms/Contact/setActive');
 
 // Profile & Settings
 $router->add('/cms/profile', 'cms/Profile/index');
 $router->add('/cms/profile/edit/{id}', 'cms/Profile/edit');
 $router->add('/cms/settings', 'cms/Settings/index');
-
-?>
