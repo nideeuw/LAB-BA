@@ -1,180 +1,252 @@
 <?php
-/**
- * Halaman Tentang Lab (Visi, Misi & Roadmap)
- * File: app/profile/views/tentang_lab.php
- */
 
-// Base URL KHUSUS laragon + nama folder project kamu
-$base_url = "http://localhost/LAB-BA";
+/**
+ * Halaman Tentang Lab (Dynamic from CMS)
+ * File: app/profile/views/tentang_lab.php
+ * Data: Visi Misi, Roadmap, Research Focus, Research Scope
+ */
 
 // Include navbar
 include __DIR__ . '/layout/navbar.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tentang Lab | Laboratorium Business Analytics</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/tentang_lab.css?v=3">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/tentang_lab.css?v=4">
 </head>
 
-
 <body>
+    <!-- ========== SECTION 1: VISI & MISI ========== -->
     <section class="visi-misi-section">
         <div class="container-vm">
-
             <div class="visi-misi-wrapper">
                 <div class="vm-inner-container">
 
-                    <div class="vm-box">
-                        <h2 class="section-title">VISI</h2>
-                        <div class="box-content">
-                            <p>
-                                Menjadi laboratorium unggul rujukan nasional sebagai inkubator solusi cerdas berbasis data,
-                                yang berfungsi sebagai mitra strategis industri untuk mengakselerasi transformasi bisnis dan
-                                pengambilan keputusan yang berdampak.
-                            </p>
+                    <?php if (!empty($visiMisi)): ?>
+                        <!-- VISI -->
+                        <div class="vm-box">
+                            <h2 class="section-title">VISI</h2>
+                            <div class="box-content">
+                                <p><?php echo nl2br(htmlspecialchars($visiMisi['visi'])); ?></p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="vm-box">
-                        <h2 class="section-title">MISI</h2>
-                        <div class="box-content">
-                            <ol>
-                                <li>Mengembangkan riset terapan berbasis kebutuhan industri dan masyarakat.</li>
-                                <li>Mengintegrasikan berbagai disiplin ilmu dalam solusi berbasis data.</li>
-                                <li>Membangun kemitraan strategis dengan berbagai sektor industri.</li>
-                                <li>Mengembangkan talenta dosen dan mahasiswa di bidang analitik bisnis.</li>
-                                <li>Menjalankan tata kelola laboratorium yang profesional, etis, dan berkelanjutan.</li>
-                            </ol>
+                        <!-- MISI -->
+                        <div class="vm-box">
+                            <h2 class="section-title">MISI</h2>
+                            <div class="box-content">
+                                <?php
+                                // Parse misi - jika ada numbering atau line breaks
+                                $misiText = $visiMisi['misi'];
+
+                                // Check if misi contains numbered list pattern (1., 2., etc)
+                                if (preg_match('/^\s*\d+\.\s/m', $misiText)) {
+                                    // Split by line and create ordered list
+                                    $misiLines = preg_split('/\n|\r\n/', $misiText);
+                                    echo '<ol>';
+                                    foreach ($misiLines as $line) {
+                                        $line = trim($line);
+                                        if (!empty($line)) {
+                                            // Remove number prefix if exists
+                                            $line = preg_replace('/^\d+\.\s*/', '', $line);
+                                            echo '<li>' . htmlspecialchars($line) . '</li>';
+                                        }
+                                    }
+                                    echo '</ol>';
+                                } else {
+                                    // Just display as paragraph
+                                    echo '<p>' . nl2br(htmlspecialchars($misiText)) . '</p>';
+                                }
+                                ?>
+                            </div>
                         </div>
-                    </div>
+                    <?php else: ?>
+                        <!-- DEFAULT JIKA TIDAK ADA DATA -->
+                        <div class="vm-box">
+                            <h2 class="section-title">VISI</h2>
+                            <div class="box-content">
+                                <p>Menjadi laboratorium unggul rujukan nasional sebagai inkubator solusi cerdas berbasis data...</p>
+                            </div>
+                        </div>
+                        <div class="vm-box">
+                            <h2 class="section-title">MISI</h2>
+                            <div class="box-content">
+                                <ol>
+                                    <li>Mengembangkan riset terapan berbasis kebutuhan industri dan masyarakat.</li>
+                                    <li>Mengintegrasikan berbagai disiplin ilmu dalam solusi berbasis data.</li>
+                                    <li>Membangun kemitraan strategis dengan berbagai sektor industri.</li>
+                                    <li>Mengembangkan talenta dosen dan mahasiswa di bidang analitik bisnis.</li>
+                                    <li>Menjalankan tata kelola laboratorium yang profesional, etis, dan berkelanjutan.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                 </div>
             </div>
-
         </div>
     </section>
 
     <div class="section-separator"></div>
 
+    <!-- ========== SECTION 2: ROADMAP ========== -->
     <section class="roadmap-section">
-
         <div class="roadmap-header">
             <h2>ROADMAP</h2>
         </div>
 
         <div class="roadmap-container">
+            <?php if (!empty($roadmapItems)): ?>
+                <?php foreach ($roadmapItems as $roadmap): ?>
+                    <div class="roadmap-card">
+                        <h3><?php echo htmlspecialchars($roadmap['title']); ?></h3>
+                        <?php
+                        // Auto-convert plain text to formatted HTML
+                        $content = trim($roadmap['content']);
 
-            <div class="roadmap-card">
-                <h3>Jangka Pendek (1–5 Tahun)</h3>
-                <p><strong>Kualitas lulusan:</strong> Penguatan praktikum end-to-end (data → model → insight → aksi).</p>
-                <p><strong>Ilmu:</strong> Fondasi riset terapan & repositori yang dapat diuji ulang.</p>
-                <p><strong>Masy/Industri:</strong> Studi kasus awal & pendampingan ringan.</p>
-            </div>
+                        // Split by line breaks (support \n, \r\n, or actual line breaks)
+                        $lines = preg_split('/\r\n|\r|\n/', $content);
 
-            <div class="roadmap-card">
-                <h3>Jangka Menengah (6–10 Tahun)</h3>
-                <p><strong>Kualitas lulusan:</strong> Konsistensi asesmen & sertifikasi; proyek lintas mata kuliah.</p>
-                <p><strong>Ilmu:</strong> Pembentukan klaster riset & dataset rujukan.</p>
-                <p><strong>Masy/Industri:</strong> Kemitraan multi-tahun & magang terstruktur.</p>
-            </div>
+                        foreach ($lines as $line) {
+                            $line = trim($line);
 
-            <div class="roadmap-card">
-                <h3>Jangka Panjang (>10 Tahun)</h3>
-                <p><strong>Kualitas lulusan:</strong> Pengakuan nasional hingga internasional.</p>
-                <p><strong>Ilmu:</strong> Pusat keunggulan & kurasi data tematik regional.</p>
-                <p><strong>Masy/Industri:</strong> Layanan solusi siap pakai & konsultasi keputusan berbasis data.</p>
-            </div>
+                            // Skip empty lines
+                            if (empty($line)) {
+                                continue;
+                            }
 
+                            // Decode HTML entities FIRST (convert &gt; back to >)
+                            $line = html_entity_decode($line, ENT_QUOTES, 'UTF-8');
+
+                            // Check if line has pattern "Label: Description"
+                            // Use regex WITHOUT /s flag to stop at line end
+                            if (preg_match('/^([^:]+):\s*(.*)$/', $line, $matches)) {
+                                $label = trim($matches[1]);
+                                $description = trim($matches[2]);
+
+                                if (!empty($description)) {
+                                    echo '<p><strong>' . htmlspecialchars($label) . ':</strong> ' . htmlspecialchars($description) . '</p>' . "\n";
+                                } else {
+                                    // Label only, no description on same line
+                                    echo '<p><strong>' . htmlspecialchars($label) . ':</strong></p>' . "\n";
+                                }
+                            } else {
+                                // Plain paragraph (no colon pattern)
+                                echo '<p>' . htmlspecialchars($line) . '</p>' . "\n";
+                            }
+                        }
+                        ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- Fallback -->
+                <div class="roadmap-card">
+                    <h3>Jangka Pendek (1–5 Tahun)</h3>
+                    <p><strong>Kualitas lulusan:</strong> Penguatan praktikum end-to-end (data → model → insight → aksi).</p>
+                    <p><strong>Ilmu:</strong> Fondasi riset terapan & repositori yang dapat diuji ulang.</p>
+                    <p><strong>Masy/Industri:</strong> Studi kasus awal & pendampingan ringan.</p>
+                </div>
+            <?php endif; ?>
         </div>
-
     </section>
 
+    <!-- ========== SECTION 3: RESEARCH SCOPE ========== -->
     <div class="wrapper-box">
         <div class="inner-box" style="text-align:center;">
-            <h2 class="section-title">Lingkup Penelitian</h2>
-            <img src="<?= $base_url; ?>/assets/img/Lingkup_Penelitian.png" 
-                alt="Lingkup Penelitian" 
-                style="width:100%; max-width:1000px; margin-top:20px; border-radius:12px;">
+            <h2 class="section-title">
+                <?php
+                if (!empty($researchScope) && !empty($researchScope['title'])) {
+                    echo htmlspecialchars($researchScope['title']);
+                } else {
+                    echo 'Lingkup Penelitian'; // Fallback
+                }
+                ?>
+            </h2>
+
+            <?php if (!empty($researchScope) && !empty($researchScope['image'])): ?>
+                <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($researchScope['image']); ?>"
+                    alt="<?php echo htmlspecialchars($researchScope['title']); ?>"
+                    style="width:100%; max-width:1000px; margin-top:20px; border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+                    onerror="this.src='<?php echo $base_url; ?>/assets/img/Lingkup_Penelitian.png'">
+
+                <?php if (!empty($researchScope['description'])): ?>
+                    <p class="text-muted mt-3" style="font-size: 0.95rem; max-width: 800px; margin: 20px auto 0;">
+                        <?php echo nl2br(htmlspecialchars($researchScope['description'])); ?>
+                    </p>
+                <?php endif; ?>
+            <?php else: ?>
+                <!-- DEFAULT IMAGE -->
+                <img src="<?php echo $base_url; ?>/assets/img/Lingkup_Penelitian.png"
+                    alt="Lingkup Penelitian"
+                    style="width:100%; max-width:1000px; margin-top:20px; border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <?php endif; ?>
         </div>
     </div>
 
+    <!-- ========== SECTION 4: FOKUS PENELITIAN (ACCORDION) ========== -->
     <div class="wrapper-box">
         <div class="inner-box">
-            <h2 class="section-title" style="text-align:center;">Contoh Fokus Penelitian</h2>
+            <h2 class="section-title" style="text-align:center;">Research Focus</h2>
 
-            <div class="accordion-item">
-                <button class="accordion-btn">INTELIJEN PROSES BISNIS & KEUNGGULAN OPERASIONAL</button>
-                <div class="accordion-content">
-                    <p><strong>Fokus:</strong><br>
-                    Mengoptimalkan proses bisnis internal (manufaktur, logistik, layanan) melalui process mining, peramalan, dan analisis operasional.</p>
+            <?php if (!empty($researchFocus)): ?>
+                <?php foreach ($researchFocus as $focus): ?>
+                    <div class="accordion-item">
+                        <button class="accordion-btn"><?php echo htmlspecialchars($focus['title']); ?></button>
+                        <div class="accordion-content">
+                            <p><strong>Fokus:</strong><br>
+                                <?php echo nl2br(htmlspecialchars($focus['focus_description'])); ?></p>
 
-                    <p><strong>Contoh:</strong></p>
-                    <ul>
-                        <li>Penerapan Process Mining untuk Analisis dan Rekomendasi Perbaikan Alur Proses Pengadaan Barang.</li>
-                        <li>Pengembangan Sistem Prediksi Kebutuhan Perawatan Mesin Produksi Menggunakan Metode Support Vector Machine untuk Mengurangi Downtime.</li>
-                        <li>Implementasi Model Peramalan Time Series (ARIMA/LSTM) untuk Optimasi Manajemen Stok Produk Cepat Laku (Studi Kasus: Distributor Ritel di Malang).</li>
-                        <li>Rancang Bangun Dasbor Interaktif untuk Monitoring Kinerja Rantai Pasok (Supply Chain) Secara Real-time Menggunakan Power BI.</li>
-                    </ul>
+                            <p><strong>Contoh:</strong></p>
+                            <ul>
+                                <?php
+                                // Parse examples - split by period or newline
+                                $examples = $focus['examples'];
+
+                                // Decode HTML entities FIRST
+                                $examples = html_entity_decode($examples, ENT_QUOTES, 'UTF-8');
+
+                                // Remove "Contoh:" prefix if exists
+                                $examples = preg_replace('/^Contoh:\s*/i', '', $examples);
+
+                                // Split by period followed by space/newline or by newline
+                                $exampleList = preg_split('/\.\s+|\n/', $examples);
+
+                                foreach ($exampleList as $example) {
+                                    $example = trim($example);
+                                    if (!empty($example)) {
+                                        echo '<li>' . htmlspecialchars($example) . '.</li>';
+                                    }
+                                }
+                                ?>
+                            </ul>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!-- DEFAULT JIKA TIDAK ADA DATA -->
+                <div class="accordion-item">
+                    <button class="accordion-btn">INTELIJEN PROSES BISNIS & KEUNGGULAN OPERASIONAL</button>
+                    <div class="accordion-content">
+                        <p><strong>Fokus:</strong><br>
+                            Mengoptimalkan proses bisnis internal (manufaktur, logistik, layanan) melalui process mining, peramalan, dan analisis operasional.</p>
+
+                        <p><strong>Contoh:</strong></p>
+                        <ul>
+                            <li>Penerapan Process Mining untuk Analisis dan Rekomendasi Perbaikan Alur Proses Pengadaan Barang.</li>
+                            <li>Pengembangan Sistem Prediksi Kebutuhan Perawatan Mesin Produksi Menggunakan Metode Support Vector Machine untuk Mengurangi Downtime.</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-btn">INTELIJEN PELANGGAN & ANALITIK PEMASARAN</button>
-                <div class="accordion-content">
-                    <p><strong>Fokus:</strong><br>
-                    Memahami pelanggan untuk meningkatkan strategi pemasaran dan penjualan.</p>
-
-                    <p><strong>Contoh:</strong></p>
-                    <ul>
-                        <li>Implementasi Algoritma K-Means untuk Segmentasi Pelanggan Berdasarkan Perilaku Transaksi Guna Personalisasi Kampanye Pemasaran pada E-commerce Kopi Lokal.</li>
-                        <li>Pengembangan Model Klasifikasi untuk Memprediksi Potensi Customer Churn pada Layanan Berlangganan Berbasis Algoritma Random Forest.</li>
-                        <li>Analisis Sentimen pada Ulasan Online Menggunakan NLP untuk Mengidentifikasi Faktor Kepuasan Pelanggan Hotel di Kawasan Wisata Batu.</li>
-                        <li>Rancang Bangun Sistem Rekomendasi Produk dengan Metode Collaborative Filtering untuk Meningkatkan Cross-Selling pada Aplikasi Toko Online.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-btn">ANALITIK PRODUK DIGITAL & PLATFORM</button>
-                <div class="accordion-content">
-                    <p><strong>Fokus:</strong><br>
-                    Menganalisis data dari produk digital (aplikasi, website, IoT) untuk inovasi.</p>
-
-                    <p><strong>Contoh:</strong></p>
-                    <ul>
-                        <li>Analisis Perilaku Pengguna (User Journey) pada Aplikasi Mobile Banking untuk Mengidentifikasi Titik Henti (Drop-off Point) dan Memberikan Rekomendasi Perbaikan UI/UX.</li>
-                        <li>Penerapan Uji A/B (A/B Testing) untuk Meningkatkan Tingkat Konversi (Conversion Rate) pada Halaman Pendaftaran Platform Kursus Online.</li>
-                        <li>Pengembangan Purwarupa Sistem Monitoring Konsumsi Listrik Berbasis Data Sensor IoT untuk Mendukung Gerakan Efisiensi Energi di Lingkungan Kampus Polinema.</li>
-                        <li>Implementasi Dasbor Analitik untuk Memvisualisasikan Metrik Keterlibatan (Engagement Metrics) Pengguna pada Platform Konten Digital.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-btn">ANALITIK TEKS & NATURAL LANGUAGE PROCESSING (NLP) TERAPAN</button>
-                <div class="accordion-content">
-                    <p><strong>Fokus:</strong><br>
-                    Mengembangkan solusi cerdas dari data tidak terstruktur seperti teks.</p>
-
-                    <p><strong>Contoh:</strong></p>
-                    <ul>
-                        <li>Rancang Bangun Chatbot Layanan Informasi Penerimaan Mahasiswa Baru (PMB) Politeknik Negeri Malang Menggunakan Arsitektur Berbasis Retrieval.</li>
-                        <li>Implementasi Model Klasifikasi Teks untuk Sistem Pendeteksi Ujaran Kebencian pada Komentar Media Sosial Berbahasa Indonesia.</li>
-                        <li>Penerapan Topic Modeling untuk Mengekstrak Topik Utama dari Dokumen Laporan Keluhan Pelanggan (Studi Kasus: Perusahaan Telekomunikasi).</li>
-                        <li>Pengembangan Sistem Peringkas Dokumen Otomatis untuk Notulensi Rapat Berbasis Metode Ekstraktif.</li>
-                    </ul>
-                </div>
-            </div>
+            <?php endif; ?>
 
         </div>
     </div>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -185,17 +257,15 @@ include __DIR__ . '/layout/navbar.php';
                     // Toggle class 'active' pada tombol
                     this.classList.toggle('active');
 
-                    // Ambil elemen konten yang terkait (konten berada setelah tombol)
+                    // Ambil elemen konten yang terkait
                     const content = this.nextElementSibling;
 
                     // Toggle visibility konten
                     if (content.style.maxHeight) {
-                        // Jika sudah terbuka, tutup (reset max-height dan padding)
                         content.style.maxHeight = null;
                         content.style.paddingTop = '0';
                         content.style.paddingBottom = '0';
                     } else {
-                        // Jika tertutup, buka (set max-height ke nilai scrollHeight)
                         content.style.maxHeight = content.scrollHeight + 'px';
                         content.style.paddingTop = '15px';
                         content.style.paddingBottom = '20px';
@@ -215,8 +285,9 @@ include __DIR__ . '/layout/navbar.php';
             });
         });
     </script>
-    
+
     <?php include __DIR__ . '/layout/footer.php'; ?>
 
 </body>
+
 </html>

@@ -17,6 +17,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ⭐ Smooth scroll offset untuk fixed navbar */
+#footer-section {
+  scroll-margin-top: 80px;
+}
+
 /* ==================== NAVBAR STYLES ==================== */
 .navbar {
   background: #3e4459ff;
@@ -325,7 +330,7 @@ html {
 .carousel-item.active {
   opacity: 1;
   position: relative;
-   z-index: 1;
+  z-index: 1;
 }
 
 .carousel-item img {
@@ -346,7 +351,7 @@ html {
 
 /* ==================== ABOUT US SECTION ==================== */
 .about-container {
-  background: linear-gradient(to bottom, #c5dae8 0%, #a8c5d9 100%);
+  background: #ffffff;
   padding: 80px 20px;
   min-height: 100vh;
   display: flex;
@@ -374,6 +379,11 @@ html {
   width: 180px;
   height: auto;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.mascot-image:hover {
+  transform: scale(1.05);
 }
 
 .text-section {
@@ -649,6 +659,11 @@ footer {
   .footer-container {
     gap: 30px;
   }
+
+  /* ⭐ Smooth scroll offset untuk mobile */
+  #footer-section {
+    scroll-margin-top: 70px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -693,5 +708,10 @@ footer {
     height: 45px;
     bottom: 20px;
     right: 20px;
+  }
+
+  /* ⭐ Smooth scroll offset untuk small mobile */
+  #footer-section {
+    scroll-margin-top: 60px;
   }
 }

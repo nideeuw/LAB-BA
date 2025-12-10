@@ -97,7 +97,7 @@
 
             </ul>
 
-            <div class="card nav-action-card bg-primary">
+            <!-- <div class="card nav-action-card bg-primary">
                 <div class="card-body" style="background: url('<?php echo $base_url; ?>/assets/images/layout/nav-card-bg.svg')">
                     <h5 class="text-white">Help Center</h5>
                     <p class="text-white text-opacity-75">Contact us for support</p>
@@ -105,7 +105,7 @@
                         <i class="ti ti-headset"></i> Support
                     </a>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>

@@ -17,7 +17,8 @@ $no_telp = $contactInfo['no_telp'] ?? '+62 12 3456 7890';
 $email = $contactInfo['email'] ?? 'laboratoriumBA@polinema.ac.id';
 ?>
 
-<footer>
+<!-- ⭐ TAMBAHKAN ID="footer-section" DI SINI -->
+<footer id="footer-section">
     <div class="footer-container">
         <div class="footer-section">
             <h3>Information</h3>
@@ -52,7 +53,7 @@ $email = $contactInfo['email'] ?? 'laboratoriumBA@polinema.ac.id';
                 </li>
                 <li>
                     <i class="fas fa-info-circle"></i>
-                    <a href="<?php echo $base_url; ?>/tentang-lab" style="color: inherit; text-decoration: none;">
+                    <a href="<?php echo $base_url; ?>/tentang_lab" style="color: inherit; text-decoration: none;">
                         <span>Tentang Lab</span>
                     </a>
                 </li>
@@ -65,7 +66,7 @@ $email = $contactInfo['email'] ?? 'laboratoriumBA@polinema.ac.id';
             </ul>
         </div>
 
-        <div class="footer-section">
+        <!-- <div class="footer-section">
             <h3>Social Media</h3>
             <div class="social-links">
                 <a href="#" target="_blank" rel="noopener noreferrer" title="Facebook">
@@ -81,7 +82,7 @@ $email = $contactInfo['email'] ?? 'laboratoriumBA@polinema.ac.id';
                     <i class="fab fa-instagram"></i>
                 </a>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="footer-bottom">
