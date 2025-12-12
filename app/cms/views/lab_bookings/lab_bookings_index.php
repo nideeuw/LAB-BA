@@ -1,10 +1,4 @@
 <?php
-
-/**
- * Lab Bookings Index View
- * File: app/cms/views/lab_bookings/lab_bookings_index.php
- */
-
 $page_title = 'Lab Bookings Management';
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
@@ -14,7 +8,6 @@ include __DIR__ . '/../layout/sidebar.php';
     <div class="pc-content">
         <?php include __DIR__ . '/../layout/breadcrumb.php'; ?>
 
-        <!-- Flash Message -->
         <?php
         $flash = getFlash();
         if ($flash):
@@ -25,14 +18,13 @@ include __DIR__ . '/../layout/sidebar.php';
             </div>
         <?php endif; ?>
 
-        <!-- Main Content -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="mb-0">Lab Bookings List</h5>
                         <a href="<?php echo $base_url; ?>/cms/lab_bookings/add" class="btn btn-primary">
-                            <i class="ti ti-plus"></i> Add New Booking
+                            <i class="ti ti-plus"></i> Add Booking
                         </a>
                     </div>
                     <div class="card-body">
@@ -42,12 +34,10 @@ include __DIR__ . '/../layout/sidebar.php';
                                     <tr>
                                         <th>ID</th>
                                         <th>Borrower</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Returned</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
                                         <th>Description</th>
                                         <th>Status</th>
-                                        <th>Active</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
@@ -60,56 +50,77 @@ include __DIR__ . '/../layout/sidebar.php';
                                                     <strong><?php echo htmlspecialchars($booking['peminjam_name'] ?? 'Unknown'); ?></strong><br>
                                                     <small class="text-muted"><?php echo htmlspecialchars($booking['peminjam_email'] ?? '-'); ?></small>
                                                 </td>
-                                                <td><?php echo date('d M Y', strtotime($booking['tanggal_mulai'])); ?></td>
-                                                <td><?php echo date('d M Y', strtotime($booking['tanggal_selesai'])); ?></td>
                                                 <td>
-                                                    <?php if (!empty($booking['tanggal_dikembalikan'])): ?>
-                                                        <span class="badge bg-success">
-                                                            <?php echo date('d M Y', strtotime($booking['tanggal_dikembalikan'])); ?>
-                                                        </span>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">-</span>
-                                                    <?php endif; ?>
+                                                    <?php
+                                                    $start = date('d M Y', strtotime($booking['tanggal_mulai']));
+                                                    $end = date('d M Y', strtotime($booking['tanggal_selesai']));
+                                                    if ($start == $end) {
+                                                        echo $start;
+                                                    } else {
+                                                        echo $start . ' - ' . $end;
+                                                    }
+                                                    ?>
                                                 </td>
                                                 <td>
-                                                    <?php if (!empty($booking['deskripsi'])): ?>
-                                                        <small><?php echo substr(htmlspecialchars($booking['deskripsi']), 0, 50); ?><?php echo strlen($booking['deskripsi']) > 50 ? '...' : ''; ?></small>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">-</span>
-                                                    <?php endif; ?>
+                                                    <?php echo date('H:i', strtotime($booking['jam_mulai'])); ?> -
+                                                    <?php echo date('H:i', strtotime($booking['jam_selesai'])); ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $desc = htmlspecialchars($booking['deskripsi'] ?? '-');
+                                                    echo (strlen($desc) > 50) ? substr($desc, 0, 50) . '...' : $desc;
+                                                    ?>
                                                 </td>
                                                 <td>
                                                     <?php
                                                     $statusColors = [
                                                         'pending' => 'warning',
-                                                        'review' => 'info',
                                                         'approved' => 'success',
+                                                        'rejected' => 'danger',
                                                         'in_use' => 'primary',
-                                                        'returned' => 'success',
-                                                        'canceled' => 'danger'
+                                                        'canceled' => 'secondary'
+                                                    ];
+                                                    $statusLabels = [
+                                                        'pending' => 'Pending',
+                                                        'approved' => 'Approved',
+                                                        'rejected' => 'Rejected',
+                                                        'in_use' => 'In Use',
+                                                        'canceled' => 'Canceled'
                                                     ];
                                                     $color = $statusColors[$booking['status']] ?? 'secondary';
+                                                    $label = $statusLabels[$booking['status']] ?? ucfirst($booking['status']);
                                                     ?>
                                                     <span class="badge bg-<?php echo $color; ?>">
-                                                        <?php echo ucfirst(str_replace('_', ' ', $booking['status'])); ?>
+                                                        <?php echo $label; ?>
                                                     </span>
-                                                </td>
-                                                <td>
-                                                    <?php if ($booking['is_active']): ?>
-                                                        <span class="badge bg-success">Active</span>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-danger">Inactive</span>
+                                                    <?php if (in_array($booking['status'], ['rejected', 'canceled']) && !empty($booking['rejection_reason'])): ?>
+                                                        <br><small class="text-muted"><?php echo htmlspecialchars(substr($booking['rejection_reason'], 0, 30)); ?>...</small>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="btn-group" role="group">
+                                                        <?php if ($booking['status'] == 'pending'): ?>
+                                                            <a href="<?php echo $base_url; ?>/cms/lab_bookings/approve/<?php echo $booking['id']; ?>"
+                                                                class="btn btn-sm btn-success"
+                                                                onclick="return confirm('Approve this booking?')"
+                                                                title="Approve">
+                                                                <i class="ti ti-check"></i>
+                                                            </a>
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-danger"
+                                                                onclick="showRejectModal(<?php echo $booking['id']; ?>)"
+                                                                title="Reject">
+                                                                <i class="ti ti-x"></i>
+                                                            </button>
+                                                        <?php endif; ?>
                                                         <a href="<?php echo $base_url; ?>/cms/lab_bookings/edit/<?php echo $booking['id']; ?>"
-                                                            class="btn btn-sm btn-info" title="Edit">
+                                                            class="btn btn-sm btn-info"
+                                                            title="Edit">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
                                                         <a href="<?php echo $base_url; ?>/cms/lab_bookings/delete/<?php echo $booking['id']; ?>"
                                                             class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to delete this booking?')"
+                                                            onclick="return confirm('Delete this booking?')"
                                                             title="Delete">
                                                             <i class="ti ti-trash"></i>
                                                         </a>
@@ -119,10 +130,10 @@ include __DIR__ . '/../layout/sidebar.php';
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="9" class="text-center py-4">
+                                            <td colspan="7" class="text-center py-4">
                                                 <div class="text-muted">
                                                     <i class="ti ti-calendar-off f-40"></i>
-                                                    <p class="mt-2">No lab bookings found</p>
+                                                    <p class="mt-2">No bookings found</p>
                                                     <a href="<?php echo $base_url; ?>/cms/lab_bookings/add" class="btn btn-primary mt-2">
                                                         <i class="ti ti-plus"></i> Add First Booking
                                                     </a>
@@ -140,6 +151,39 @@ include __DIR__ . '/../layout/sidebar.php';
     </div>
 </div>
 
+<!-- REJECT MODAL -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="<?php echo $base_url; ?>/cms/lab_bookings/reject">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="rejectBookingId">
+                    <div class="alert alert-danger">
+                        <i class="ti ti-alert-circle"></i> <strong>Reject</strong> = booking akan ditolak dan tidak disetujui
+                    </div>
+                    <div class="mb-3">
+                        <label for="rejection_reason" class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                        <textarea class="form-control"
+                            id="rejection_reason"
+                            name="rejection_reason"
+                            rows="4"
+                            required
+                            placeholder="e.g., Lab sudah ada kelas pada jam tersebut"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Reject Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <?php
 $page_scripts = '
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
@@ -149,17 +193,16 @@ $page_scripts = '
 $(document).ready(function() {
     $("#bookingsTable").DataTable({
         order: [[0, "desc"]],
-        pageLength: 25,
-        language: {
-            search: "Search bookings:",
-            lengthMenu: "Show _MENU_ bookings per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ bookings",
-            infoEmpty: "No bookings found",
-            infoFiltered: "(filtered from _MAX_ total bookings)",
-            zeroRecords: "No matching bookings found"
-        }
+        pageLength: 25
     });
 });
+
+function showRejectModal(id) {
+    $("#rejectBookingId").val(id);
+    $("#rejection_reason").val("");
+    var modal = new bootstrap.Modal(document.getElementById("rejectModal"));
+    modal.show();
+}
 </script>
 ';
 include __DIR__ . '/../layout/footer.php';

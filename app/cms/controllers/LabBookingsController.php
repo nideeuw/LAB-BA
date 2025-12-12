@@ -1,17 +1,11 @@
 <?php
 
-/**
- * Lab Bookings Controller
- * File: app/cms/controllers/LabBookingsController.php
- */
-
 class LabBookingsController extends Controller
 {
-    public function index($conn)
+    public function index($conn, $params = [])
     {
         checkLogin();
 
-        // Get all bookings from model
         $bookings = LabBookingsModel::getAllBookings($conn);
 
         $data = [
@@ -25,11 +19,10 @@ class LabBookingsController extends Controller
         $this->view('cms/views/lab_bookings/lab_bookings_index', $data);
     }
 
-    public function add($conn)
+    public function add($conn, $params = [])
     {
         checkLogin();
 
-        // Get borrowers list from model
         $borrowers = LabBookingsModel::getAllBorrowers($conn);
 
         $data = [
@@ -43,7 +36,7 @@ class LabBookingsController extends Controller
         $this->view('cms/views/lab_bookings/lab_bookings_create', $data);
     }
 
-    public function store($conn)
+    public function store($conn, $params = [])
     {
         checkLogin();
 
@@ -53,7 +46,6 @@ class LabBookingsController extends Controller
 
         $errors = [];
 
-        // Validation
         if (empty($_POST['id_peminjam'])) {
             $errors[] = 'Borrower is required';
         }
@@ -63,11 +55,22 @@ class LabBookingsController extends Controller
         if (empty($_POST['tanggal_selesai'])) {
             $errors[] = 'End date is required';
         }
+        if (empty($_POST['jam_mulai'])) {
+            $errors[] = 'Start time is required';
+        }
+        if (empty($_POST['jam_selesai'])) {
+            $errors[] = 'End time is required';
+        }
 
-        // Validate date range
+        if (!empty($_POST['jam_mulai']) && !empty($_POST['jam_selesai'])) {
+            if (strtotime($_POST['jam_selesai']) <= strtotime($_POST['jam_mulai'])) {
+                $errors[] = 'End time must be after start time';
+            }
+        }
+
         if (!empty($_POST['tanggal_mulai']) && !empty($_POST['tanggal_selesai'])) {
             if (strtotime($_POST['tanggal_selesai']) < strtotime($_POST['tanggal_mulai'])) {
-                $errors[] = 'End date must be after start date';
+                $errors[] = 'End date must be after or equal start date';
             }
         }
 
@@ -77,13 +80,14 @@ class LabBookingsController extends Controller
         }
 
         $bookingData = [
-            'id_peminjam' => trim($_POST['id_peminjam']),
+            'id_peminjam' => intval($_POST['id_peminjam']),
             'tanggal_mulai' => $_POST['tanggal_mulai'],
             'tanggal_selesai' => $_POST['tanggal_selesai'],
-            'tanggal_dikembalikan' => !empty($_POST['tanggal_dikembalikan']) ? $_POST['tanggal_dikembalikan'] : null,
+            'jam_mulai' => $_POST['jam_mulai'],
+            'jam_selesai' => $_POST['jam_selesai'],
             'deskripsi' => trim($_POST['deskripsi'] ?? ''),
             'status' => $_POST['status'] ?? 'pending',
-            'is_active' => isset($_POST['is_active']) ? true : false
+            'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
         $result = LabBookingsModel::createBooking($bookingData, $conn);
@@ -92,24 +96,23 @@ class LabBookingsController extends Controller
             setFlash('success', 'Lab booking created successfully!');
             redirect('/cms/lab_bookings');
         } else {
-            setFlash('danger', 'Failed to create lab booking');
+            setFlash('danger', 'Failed to create booking. Time slot might be already booked.');
             redirect('/cms/lab_bookings/add');
         }
     }
 
-    public function edit($conn, $id)
+    public function edit($conn, $params = [])
     {
         checkLogin();
 
-        // Get booking data from model
+        $id = $params['id'] ?? 0;
         $booking = LabBookingsModel::getBookingById($id, $conn);
 
         if (!$booking) {
-            setFlash('danger', 'Lab booking not found');
+            setFlash('danger', 'Booking not found');
             redirect('/cms/lab_bookings');
         }
 
-        // Get borrowers list from model
         $borrowers = LabBookingsModel::getAllBorrowers($conn);
 
         $data = [
@@ -124,9 +127,11 @@ class LabBookingsController extends Controller
         $this->view('cms/views/lab_bookings/lab_bookings_edit', $data);
     }
 
-    public function update($conn, $id)
+    public function update($conn, $params = [])
     {
         checkLogin();
+
+        $id = $params['id'] ?? 0;
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/cms/lab_bookings');
@@ -143,6 +148,12 @@ class LabBookingsController extends Controller
         if (empty($_POST['tanggal_selesai'])) {
             $errors[] = 'End date is required';
         }
+        if (empty($_POST['jam_mulai'])) {
+            $errors[] = 'Start time is required';
+        }
+        if (empty($_POST['jam_selesai'])) {
+            $errors[] = 'End time is required';
+        }
 
         if (!empty($errors)) {
             setFlash('danger', implode('<br>', $errors));
@@ -150,42 +161,60 @@ class LabBookingsController extends Controller
         }
 
         $bookingData = [
-            'id_peminjam' => trim($_POST['id_peminjam']),
+            'id_peminjam' => intval($_POST['id_peminjam']),
             'tanggal_mulai' => $_POST['tanggal_mulai'],
             'tanggal_selesai' => $_POST['tanggal_selesai'],
-            'tanggal_dikembalikan' => !empty($_POST['tanggal_dikembalikan']) ? $_POST['tanggal_dikembalikan'] : null,
+            'jam_mulai' => $_POST['jam_mulai'],
+            'jam_selesai' => $_POST['jam_selesai'],
             'deskripsi' => trim($_POST['deskripsi'] ?? ''),
             'status' => $_POST['status'] ?? 'pending',
-            'is_active' => isset($_POST['is_active']) ? true : false
+            'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
         $result = LabBookingsModel::updateBooking($id, $bookingData, $conn);
 
         if ($result) {
-            setFlash('success', 'Lab booking updated successfully!');
+            setFlash('success', 'Booking updated successfully!');
             redirect('/cms/lab_bookings');
         } else {
-            setFlash('danger', 'Failed to update lab booking');
+            setFlash('danger', 'Failed to update booking. Time slot might be already booked.');
             redirect('/cms/lab_bookings/edit/' . $id);
         }
     }
 
-    public function delete($conn, $id)
+    public function delete($conn, $params = [])
     {
         checkLogin();
 
+        $id = $params['id'] ?? 0;
         $result = LabBookingsModel::deleteBooking($id, $conn);
 
         if ($result) {
-            setFlash('success', 'Lab booking deleted successfully!');
+            setFlash('success', 'Booking deleted successfully!');
         } else {
-            setFlash('danger', 'Failed to delete lab booking');
+            setFlash('danger', 'Failed to delete booking');
         }
 
         redirect('/cms/lab_bookings');
     }
 
-    public function updateStatus($conn, $id)
+    public function approve($conn, $params = [])
+    {
+        checkLogin();
+
+        $id = $params['id'] ?? 0;
+        $result = LabBookingsModel::approveBooking($id, $conn);
+
+        if ($result) {
+            setFlash('success', 'Booking approved successfully!');
+        } else {
+            setFlash('danger', 'Failed to approve booking');
+        }
+
+        redirect('/cms/lab_bookings');
+    }
+
+    public function reject($conn, $params = [])
     {
         checkLogin();
 
@@ -193,13 +222,15 @@ class LabBookingsController extends Controller
             redirect('/cms/lab_bookings');
         }
 
-        $status = $_POST['status'] ?? 'pending';
-        $result = LabBookingsModel::updateStatus($id, $status, $conn);
+        $id = $_POST['id'] ?? 0;
+        $reason = trim($_POST['rejection_reason'] ?? 'No reason provided');
+
+        $result = LabBookingsModel::rejectBooking($id, $reason, $conn);
 
         if ($result) {
-            setFlash('success', 'Booking status updated successfully!');
+            setFlash('success', 'Booking rejected successfully!');
         } else {
-            setFlash('danger', 'Failed to update booking status');
+            setFlash('danger', 'Failed to reject booking');
         }
 
         redirect('/cms/lab_bookings');

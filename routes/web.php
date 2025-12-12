@@ -13,6 +13,13 @@ $router->add('/tentang_lab', 'profile/TentangLab/index');
 $router->add('/gallery', 'profile/Gallery/index');
 $router->add('/members', 'profile/Members/index');
 $router->add('/members/detail/{id}', 'profile/Members/detail');
+$router->add('/lab_bookings', 'profile/LabBookings/index');
+$router->add('/lab_bookings/create', 'profile/LabBookings/create');
+$router->add('/lab_bookings/store', 'profile/LabBookings/store');
+$router->add('/lab_bookings/bookings', 'profile/LabBookings/bookings');
+$router->add('/lab_bookings/register', 'profile/LabBookings/register');
+$router->add('/lab_bookings/register-store', 'profile/LabBookings/registerStore');
+$router->add('/lab_bookings/cancel', 'profile/LabBookings/cancel');
 
 // ========== Rute CMS (Admin Panel) ==========
 
@@ -84,12 +91,6 @@ $router->add('/cms/banner/edit/{id}', 'cms/Banner/edit');
 $router->add('/cms/banner/update/{id}', 'cms/Banner/update');
 $router->add('/cms/banner/delete/{id}', 'cms/Banner/delete');
 
-// News Activity Management
-$router->add('/cms/news-activity', 'cms/NewsActivity/index');
-$router->add('/cms/news-activity/add', 'cms/NewsActivity/add');
-$router->add('/cms/news-activity/edit', 'cms/NewsActivity/edit');
-$router->add('/cms/news-activity/delete', 'cms/NewsActivity/delete');
-
 // Lab Booking Management
 $router->add('/cms/lab_bookings', 'cms/LabBookings/index');
 $router->add('/cms/lab_bookings/add', 'cms/LabBookings/add');
@@ -97,8 +98,16 @@ $router->add('/cms/lab_bookings/store', 'cms/LabBookings/store');
 $router->add('/cms/lab_bookings/edit/{id}', 'cms/LabBookings/edit');
 $router->add('/cms/lab_bookings/update/{id}', 'cms/LabBookings/update');
 $router->add('/cms/lab_bookings/delete/{id}', 'cms/LabBookings/delete');
-$router->add('/cms/lab_bookings/approve', 'cms/LabBookings/approve');
-$router->add('/cms/lab_bookings/reject', 'cms/LabBookings/reject');
+$router->add('/cms/lab_bookings/approve/{id}', 'cms/LabBookings/approve');
+$router->add('/cms/lab_bookings/reject/{id}', 'cms/LabBookings/reject');
+
+// User Bookings Management
+$router->add('/cms/user_bookings', 'cms/UserBookings/index');
+$router->add('/cms/user_bookings/add', 'cms/UserBookings/add');
+$router->add('/cms/user_bookings/store', 'cms/UserBookings/store');
+$router->add('/cms/user_bookings/edit/{id}', 'cms/UserBookings/edit');
+$router->add('/cms/user_bookings/update/{id}', 'cms/UserBookings/update');
+$router->add('/cms/user_bookings/delete/{id}', 'cms/UserBookings/delete');
 
 // Contact Management
 $router->add('/cms/contact', 'cms/Contact/index');
@@ -125,7 +134,6 @@ $router->add('/cms/visi_misi/store', 'cms/VisiMisi/store');
 $router->add('/cms/visi_misi/edit/{id}', 'cms/VisiMisi/edit');
 $router->add('/cms/visi_misi/update/{id}', 'cms/VisiMisi/update');
 $router->add('/cms/visi_misi/delete/{id}', 'cms/VisiMisi/delete');
-
 
 // Roadmap
 $router->add('/cms/roadmap', 'cms/Roadmap/index');
