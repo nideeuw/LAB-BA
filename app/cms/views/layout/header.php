@@ -1,69 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- [Head] start -->
-
 <head>
     <title><?php echo $page_title ?? 'Dashboard'; ?> | Lab BA</title>
-    <!-- [Meta] -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- [Favicon] icon -->
     <link rel="icon" href="<?php echo $base_url; ?>/assets/images/favicon.svg" type="image/x-icon">
-
-    <!-- [Font] Family -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/inter/inter.css" id="main-font-link">
-
-    <!-- [Tabler Icons] https://tablericons.com -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/tabler-icons.min.css">
-
-    <!-- [Feather Icons] https://feathericons.com -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/feather.css">
-
-    <!-- [Font Awesome Icons] https://fontawesome.com/icons -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/fontawesome.css">
-
-    <!-- [Material Icons] https://fonts.google.com/icons -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/material.css">
-
-    <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/style.css" id="main-style-link">
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/css/style-preset.css">
 </head>
-<!-- [Head] end -->
-
-<!-- [Body] Start -->
 
 <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
 
-    <!-- [ Pre-loader ] start -->
     <div class="loader-bg">
         <div class="loader-track">
             <div class="loader-fill"></div>
         </div>
     </div>
-    <!-- [ Pre-loader ] End -->
 
-    <!-- [ Header Topbar ] start -->
     <header class="pc-header">
         <div class="header-wrapper">
-            <!-- [Mobile Media Block] start -->
             <div class="me-auto pc-mob-drp">
                 <ul class="list-unstyled">
-                    <!-- ======= Menu collapse Icon ======= -->
                     <li class="pc-h-item pc-sidebar-collapse">
                         <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
                             <i class="ti ti-menu-2"></i>
                         </a>
                     </li>
-                    <!-- ======= Menu popup Icon (Mobile) ======= -->
                     <li class="pc-h-item pc-sidebar-popup">
                         <a href="#" class="pc-head-link ms-0" id="mobile-collapse">
                             <i class="ti ti-menu-2"></i>
                         </a>
                     </li>
-                    <!-- ======= Search (Mobile) ======= -->
                     <li class="dropdown pc-h-item d-inline-flex d-md-none">
                         <a class="pc-head-link dropdown-toggle arrow-none m-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                             <i class="ti ti-search"></i>
@@ -77,7 +51,6 @@
                             </form>
                         </div>
                     </li>
-                    <!-- ======= Search (Desktop) ======= -->
                     <li class="pc-h-item d-none d-md-inline-flex cms-search-container">
                         <form class="form-search" onsubmit="return false;">
                             <i class="ti ti-search"></i>
@@ -93,50 +66,18 @@
                     </li>
                 </ul>
             </div>
-            <!-- [Mobile Media Block end] -->
 
-            <!-- [Header Right Block] start -->
             <div class="ms-auto">
                 <ul class="list-unstyled">
-                    <!-- ======= Notification Dropdown ======= -->
-                    <li class="dropdown pc-h-item">
-                        <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                            <i class="ti ti-bell"></i>
-                            <span class="badge bg-success pc-h-badge">3</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
-                            <div class="dropdown-header d-flex align-items-center justify-content-between">
-                                <h5 class="m-0">Notifications</h5>
-                                <a href="#!" class="btn btn-link btn-sm">Mark all read</a>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-body text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 235px)">
-                                <p class="text-span">Today</p>
-                                <div class="card mb-2">
-                                    <div class="card-body">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <i class="ti ti-user-plus text-primary"></i>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <span class="float-end text-sm text-muted">2 min ago</span>
-                                                <h6 class="text-body mb-2">New user registered</h6>
-                                                <p class="mb-0">John Doe just created an account</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-center py-2">
-                                <a href="#!" class="link-primary">View all</a>
-                            </div>
-                        </div>
-                    </li>
-
-                    <!-- ======= User Profile Dropdown ======= -->
                     <li class="dropdown pc-h-item header-user-profile">
                         <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-                            <img src="<?php echo $base_url; ?>/assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
+                            <?php 
+                            $userProfile = UserModel::getUserById($_SESSION['user_id'], $conn);
+                            $avatarUrl = !empty($userProfile['avatar']) 
+                                ? $base_url . '/uploads/avatars/' . $userProfile['avatar']
+                                : $base_url . '/assets/images/user/avatar-2.jpg';
+                            ?>
+                            <img src="<?php echo $avatarUrl; ?>" alt="user-image" class="user-avtar">
                         </a>
                         <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                             <div class="dropdown-header d-flex align-items-center justify-content-between">
@@ -146,15 +87,14 @@
                                 <div class="profile-notification-scroll position-relative" style="max-height: calc(100vh - 225px)">
                                     <div class="d-flex mb-1">
                                         <div class="flex-shrink-0">
-                                            <img src="<?php echo $base_url; ?>/assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar wid-35">
+                                            <img src="<?php echo $avatarUrl; ?>" alt="user-image" class="user-avtar wid-35">
                                         </div>
                                         <div class="flex-grow-1 ms-3">
-                                            <h6 class="mb-1"><?php echo $_SESSION['user_name'] ?? 'Admin User'; ?> 👋</h6>
-                                            <span><?php echo $_SESSION['user_email'] ?? 'admin@example.com'; ?></span>
+                                            <h6 class="mb-1"><?php echo htmlspecialchars($userProfile['username'] ?? 'Admin User'); ?> 👋</h6>
+                                            <span><?php echo htmlspecialchars($userProfile['email'] ?? 'No email'); ?></span>
                                         </div>
                                     </div>
                                     <hr class="border-secondary border-opacity-50">
-                                    <!-- FIX: Pakai $base_url -->
                                     <a href="<?php echo $base_url; ?>/cms/profile" class="dropdown-item">
                                         <span><i class="ti ti-user"></i><span>My Profile</span></span>
                                     </a>
@@ -163,7 +103,6 @@
                                     </a>
                                     <hr class="border-secondary border-opacity-50">
                                     <div class="d-grid mb-3">
-                                        <!-- FIX: Logout button yang benar -->
                                         <a href="<?php echo $base_url; ?>/cms/logout" class="btn btn-primary">
                                             <i class="ti ti-logout"></i> Logout
                                         </a>
@@ -174,10 +113,8 @@
                     </li>
                 </ul>
             </div>
-            <!-- [Header Right Block] end -->
         </div>
     </header>
-    <!-- [ Header ] end -->
 
     <script>
         let cmsSearchTimeout = null;
@@ -276,4 +213,85 @@
                 closeCMSSearch();
             }
         });
+
+        // Sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarHide = document.getElementById('sidebar-hide');
+            const mobileCollapse = document.getElementById('mobile-collapse');
+            const body = document.body;
+
+            function isDesktop() {
+                return window.innerWidth > 1024;
+            }
+
+            // Desktop toggle
+            if (sidebarHide) {
+                sidebarHide.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (isDesktop()) {
+                        const isHidden = body.getAttribute('data-pc-sidebar-hide') === 'true';
+                        body.setAttribute('data-pc-sidebar-hide', isHidden ? 'false' : 'true');
+                        localStorage.setItem('sidebar-hide', isHidden ? 'false' : 'true');
+                    } else {
+                        body.classList.toggle('mob-sidebar-active');
+                    }
+                });
+            }
+
+            // Mobile toggle
+            if (mobileCollapse) {
+                mobileCollapse.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    body.classList.toggle('mob-sidebar-active');
+                });
+            }
+
+            // Load sidebar state hanya untuk desktop
+            if (isDesktop()) {
+                const sidebarState = localStorage.getItem('sidebar-hide');
+                if (sidebarState === 'true') {
+                    body.setAttribute('data-pc-sidebar-hide', 'true');
+                } else {
+                    body.setAttribute('data-pc-sidebar-hide', 'false');
+                }
+            } else {
+                body.removeAttribute('data-pc-sidebar-hide');
+            }
+
+            // Close mobile sidebar when clicking outside
+            document.addEventListener('click', function(e) {
+                const sidebar = document.querySelector('.pc-sidebar');
+                const trigger = document.getElementById('mobile-collapse');
+                const desktopTrigger = document.getElementById('sidebar-hide');
+                
+                if (body.classList.contains('mob-sidebar-active')) {
+                    if (!sidebar.contains(e.target) && e.target !== trigger && e.target !== desktopTrigger) {
+                        body.classList.remove('mob-sidebar-active');
+                    }
+                }
+            });
+
+            // Handle resize - reset state
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (isDesktop()) {
+                        body.classList.remove('mob-sidebar-active');
+                        const sidebarState = localStorage.getItem('sidebar-hide');
+                        if (sidebarState === 'true') {
+                            body.setAttribute('data-pc-sidebar-hide', 'true');
+                        } else {
+                            body.setAttribute('data-pc-sidebar-hide', 'false');
+                        }
+                    } else {
+                        body.classList.remove('mob-sidebar-active');
+                        body.removeAttribute('data-pc-sidebar-hide');
+                    }
+                }, 250);
+            });
+        });
     </script>
+</body>
+</html>

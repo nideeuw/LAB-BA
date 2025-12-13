@@ -19,7 +19,7 @@ include __DIR__ . '/../layout/sidebar.php';
         <?php endif; ?>
 
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">Edit User #<?php echo $user['id']; ?></h5>
@@ -27,46 +27,47 @@ include __DIR__ . '/../layout/sidebar.php';
                     <div class="card-body">
                         <form action="<?php echo $base_url; ?>/cms/user_bookings/update/<?php echo $user['id']; ?>" method="POST">
 
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                            <div class="mb-4">
+                                <label for="nama" class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="nama" name="nama" required value="<?php echo htmlspecialchars($user['nama']); ?>">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="nip" class="form-label">NIP <span class="text-danger">*</span></label>
+                            <div class="mb-4">
+                                <label for="nip" class="form-label fw-semibold">NIP <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="nip" name="nip" required value="<?php echo htmlspecialchars($user['nip']); ?>">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="email" name="email" required value="<?php echo htmlspecialchars($user['email']); ?>">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="no_telp" class="form-label">No. HP / WhatsApp <span class="text-danger">*</span></label>
+                            <div class="mb-4">
+                                <label for="no_telp" class="form-label fw-semibold">No. HP / WhatsApp <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="no_telp" name="no_telp" required value="<?php echo htmlspecialchars($user['no_telp']); ?>" pattern="[0-9]{10,15}">
+                                <div class="form-text">Format: 08xxxxxxxxxx (10-15 digit)</div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                            <div class="mb-4">
+                                <label for="category" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
                                 <select class="form-select" id="category" name="category" required>
                                     <option value="dosen" <?php echo ($user['category'] == 'dosen') ? 'selected' : ''; ?>>Dosen</option>
                                     <option value="staff" <?php echo ($user['category'] == 'staff') ? 'selected' : ''; ?>>Staff</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?php echo $user['is_active'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>
 
-                            <div class="d-flex gap-2 mt-4">
+                            <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="ti ti-device-floppy"></i> Update
                                 </button>
-                                <a href="<?php echo $base_url; ?>/cms/user_bookings" class="btn btn-secondary">
+                                <a href="<?php echo $base_url; ?>/cms/user_bookings" class="btn btn-outline-secondary">
                                     <i class="ti ti-x"></i> Cancel
                                 </a>
                                 <a href="<?php echo $base_url; ?>/cms/user_bookings/delete/<?php echo $user['id']; ?>"

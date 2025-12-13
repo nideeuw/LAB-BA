@@ -73,9 +73,16 @@ class RoleController extends Controller
         }
     }
 
-    public function edit($conn, $id)
+    public function edit($conn, $params = [])
     {
         checkLogin();
+
+        $id = $params['id'] ?? null;
+
+        if (!$id) {
+            setFlash('danger', 'Invalid role ID');
+            redirect('/cms/role');
+        }
 
         $role = RoleModel::getRoleById($id, $conn);
 
@@ -95,11 +102,18 @@ class RoleController extends Controller
         $this->view('cms/views/role/role_edit', $data);
     }
 
-    public function update($conn, $id)
+    public function update($conn, $params = [])
     {
         checkLogin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/cms/role');
+        }
+
+        $id = $params['id'] ?? null;
+
+        if (!$id) {
+            setFlash('danger', 'Invalid role ID');
             redirect('/cms/role');
         }
 
@@ -135,11 +149,17 @@ class RoleController extends Controller
         }
     }
 
-    public function delete($conn, $id)
+    public function delete($conn, $params = [])
     {
         checkLogin();
 
-        // Check if role is being used by any user
+        $id = $params['id'] ?? null;
+
+        if (!$id) {
+            setFlash('danger', 'Invalid role ID');
+            redirect('/cms/role');
+        }
+
         $isUsed = RoleModel::isRoleUsed($id, $conn);
 
         if ($isUsed) {
@@ -158,9 +178,16 @@ class RoleController extends Controller
         redirect('/cms/role');
     }
 
-    public function toggle($conn, $id)
+    public function toggle($conn, $params = [])
     {
         checkLogin();
+
+        $id = $params['id'] ?? null;
+
+        if (!$id) {
+            setFlash('danger', 'Invalid role ID');
+            redirect('/cms/role');
+        }
 
         $result = RoleModel::toggleStatus($id, $conn);
 

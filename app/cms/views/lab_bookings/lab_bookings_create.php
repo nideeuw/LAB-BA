@@ -19,7 +19,7 @@ include __DIR__ . '/../layout/sidebar.php';
         <?php endif; ?>
 
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0">Add New Lab Booking</h5>
@@ -27,8 +27,8 @@ include __DIR__ . '/../layout/sidebar.php';
                     <div class="card-body">
                         <form action="<?php echo $base_url; ?>/cms/lab_bookings/store" method="POST" id="bookingForm">
 
-                            <div class="mb-3">
-                                <label for="id_peminjam" class="form-label">Borrower (Dosen/Staff) <span class="text-danger">*</span></label>
+                            <div class="mb-4">
+                                <label for="id_peminjam" class="form-label fw-semibold">Borrower (Dosen/Staff) <span class="text-danger">*</span></label>
                                 <select class="form-select" id="id_peminjam" name="id_peminjam" required>
                                     <option value="">-- Select Borrower --</option>
                                     <?php foreach ($borrowers as $borrower): ?>
@@ -40,66 +40,36 @@ include __DIR__ . '/../layout/sidebar.php';
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="tanggal_mulai" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="date"
-                                        class="form-control"
-                                        id="tanggal_mulai"
-                                        name="tanggal_mulai"
-                                        value="<?php echo date('Y-m-d'); ?>"
-                                        min="<?php echo date('Y-m-d'); ?>"
-                                        required>
+                                <div class="col-md-6 mb-4">
+                                    <label for="tanggal_mulai" class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai" value="<?php echo date('Y-m-d'); ?>" min="<?php echo date('Y-m-d'); ?>" required>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="tanggal_selesai" class="form-label">End Date <span class="text-danger">*</span></label>
-                                    <input type="date"
-                                        class="form-control"
-                                        id="tanggal_selesai"
-                                        name="tanggal_selesai"
-                                        value="<?php echo date('Y-m-d'); ?>"
-                                        min="<?php echo date('Y-m-d'); ?>"
-                                        required>
+                                <div class="col-md-6 mb-4">
+                                    <label for="tanggal_selesai" class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai" value="<?php echo date('Y-m-d'); ?>" min="<?php echo date('Y-m-d'); ?>" required>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="jam_mulai" class="form-label">Start Time <span class="text-danger">*</span></label>
-                                    <input type="time" 
-                                        class="form-control" 
-                                        id="jam_mulai" 
-                                        name="jam_mulai" 
-                                        min="07:00" 
-                                        max="17:00"
-                                        value="08:00"
-                                        required>
-                                    <small class="text-muted">Lab hours: 07:00 - 17:00</small>
+                                <div class="col-md-6 mb-4">
+                                    <label for="jam_mulai" class="form-label fw-semibold">Start Time <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="jam_mulai" name="jam_mulai" min="07:00" max="17:00" value="08:00" required>
+                                    <div class="form-text">Lab hours: 07:00 - 17:00</div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="jam_selesai" class="form-label">End Time <span class="text-danger">*</span></label>
-                                    <input type="time" 
-                                        class="form-control" 
-                                        id="jam_selesai" 
-                                        name="jam_selesai" 
-                                        min="07:00" 
-                                        max="17:00"
-                                        value="10:00"
-                                        required>
-                                    <small class="text-muted">Lab hours: 07:00 - 17:00</small>
+                                <div class="col-md-6 mb-4">
+                                    <label for="jam_selesai" class="form-label fw-semibold">End Time <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="jam_selesai" name="jam_selesai" min="07:00" max="17:00" value="10:00" required>
+                                    <div class="form-text">Lab hours: 07:00 - 17:00</div>
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="deskripsi" class="form-label">Description</label>
-                                <textarea class="form-control"
-                                    id="deskripsi"
-                                    name="deskripsi"
-                                    rows="4"
-                                ></textarea>
+                            <div class="mb-4">
+                                <label for="deskripsi" class="form-label fw-semibold">Description</label>
+                                <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4"></textarea>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
+                            <div class="mb-4">
+                                <label for="status" class="form-label fw-semibold">Status</label>
                                 <select class="form-select" id="status" name="status">
                                     <option value="pending" selected>Pending</option>
                                     <option value="approved">Approved</option>
@@ -109,52 +79,23 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" checked>
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>
 
-                            <div class="d-flex gap-2 mt-4">
+                            <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="ti ti-device-floppy"></i> Save Booking
                                 </button>
-                                <a href="<?php echo $base_url; ?>/cms/lab_bookings" class="btn btn-secondary">
+                                <a href="<?php echo $base_url; ?>/cms/lab_bookings" class="btn btn-outline-secondary">
                                     <i class="ti ti-x"></i> Cancel
                                 </a>
                             </div>
 
                         </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card bg-light-info">
-                    <div class="card-body">
-                        <h6 class="mb-3"><i class="ti ti-info-circle"></i> Booking Rules</h6>
-                        <ul class="mb-0">
-                            <li>Lab hours: 07:00 - 17:00</li>
-                            <li>Dosen & Staff can book</li>
-                            <li>End time must be after start time</li>
-                            <li>End date must be after or equal start date</li>
-                            <li>System will check for conflicts</li>
-                            <li>You can set any time (e.g., 08:15, 09:45)</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card bg-light-warning mt-3">
-                    <div class="card-body">
-                        <h6 class="mb-3"><i class="ti ti-alert-circle"></i> Status Info</h6>
-                        <ul class="mb-0 small">
-                            <li><strong>Pending:</strong> Waiting for admin approval</li>
-                            <li><strong>Approved:</strong> Approved by admin, ready to use</li>
-                            <li><strong>Rejected:</strong> <span class="text-danger">Booking rejected by admin</span></li>
-                            <li><strong>In Use:</strong> Currently being used</li>
-                            <li><strong>Canceled:</strong> <span class="text-muted">Booking canceled</span></li>
-                        </ul>
                     </div>
                 </div>
             </div>
