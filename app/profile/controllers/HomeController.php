@@ -1,9 +1,9 @@
 <?php
 /**
- * Controller: HomeController (UPDATED)
+ * Controller: HomeController
  * Location: app/profile/controllers/HomeController.php
- * Purpose: Home page with dynamic About Us from profile_lab
- * 
+ * Purpose: Home page with ALL dynamic content (including former About Lab content)
+ * Architecture: Controller -> Model -> View (CORRECT WAY)
  */
 
 class HomeController extends Controller
@@ -13,18 +13,43 @@ class HomeController extends Controller
         // Get base URL
         $base_url = getBaseUrl();
 
-        // Get active About Us data from profile_lab
+        // GET ALL DATA FROM MODELS (Controller layer)
+        // 1. Get active About Us data
         $aboutUs = ProfileLabModel::getActiveProfileLab($conn);
+        
+        // 2. Get active banner items
+        $bannerItems = BannerModel::getActiveBanner($conn);
+        
+        // 3. Get active contact info for footer
+        $contactInfo = ContactModel::getActiveContact($conn);
+        
+        // 4. Get Visi Misi data
+        $visiMisi = VisiMisiModel::getActiveVisiMisi($conn);
+        
+        // 5. Get Roadmap items
+        $roadmapItems = RoadmapModel::getActiveRoadmap($conn);
+        
+        // 6. Get Research Focus data
+        $researchFocus = ResearchFocusModel::getActiveResearchFocus($conn);
+        
+        // 7. Get Research Scope data
+        $researchScope = ResearchScopeModel::getActiveResearchScope($conn);
 
-        // Data to pass to view
+        // Prepare data for view
         $data = [
             'page_title' => 'Home - LAB-BA',
             'base_url' => $base_url,
-            'aboutUs' => $aboutUs, // Add this for dynamic About Us
+            'aboutUs' => $aboutUs,
+            'bannerItems' => $bannerItems,
+            'contactInfo' => $contactInfo,
+            'visiMisi' => $visiMisi,
+            'roadmapItems' => $roadmapItems,
+            'researchFocus' => $researchFocus,
+            'researchScope' => $researchScope,
             'conn' => $conn
         ];
 
-        // Load view
+        // Load view with data
         $this->view('profile/views/home', $data);
     }
 }

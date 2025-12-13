@@ -9,6 +9,7 @@
 
 // ========== Rute Publik (Profile/Landing Page) ==========
 $router->add('/', 'profile/Home/index');
+$router->add('search', 'profile/search/index');
 $router->add('/tentang_lab', 'profile/TentangLab/index');
 $router->add('/gallery', 'profile/Gallery/index');
 $router->add('/members', 'profile/Members/index');
@@ -26,6 +27,8 @@ $router->add('/lab_bookings/cancel', 'profile/LabBookings/cancel');
 // Authentication
 $router->add('/cms/login', 'cms/Auth/login');
 $router->add('/cms/logout', 'cms/Auth/logout');
+
+$router->add('cms/search', 'cms/search/index');
 
 // Dashboard
 $router->add('/cms/dashboard', 'cms/Dashboard/index');

@@ -78,11 +78,18 @@
                         </div>
                     </li>
                     <!-- ======= Search (Desktop) ======= -->
-                    <li class="pc-h-item d-none d-md-inline-flex">
-                        <form class="form-search">
+                    <li class="pc-h-item d-none d-md-inline-flex cms-search-container">
+                        <form class="form-search" onsubmit="return false;">
                             <i class="ti ti-search"></i>
-                            <input type="search" class="form-control" placeholder="Search...">
+                            <input type="search"
+                                class="form-control"
+                                placeholder="Search..."
+                                id="cmsSearchInput"
+                                onkeyup="handleCMSSearch(event)"
+                                onfocus="handleCMSSearchFocus()"
+                                autocomplete="off">
                         </form>
+                        <div id="cmsSearchResults" class="cms-search-results"></div>
                     </li>
                 </ul>
             </div>
@@ -171,3 +178,102 @@
         </div>
     </header>
     <!-- [ Header ] end -->
+
+    <script>
+        let cmsSearchTimeout = null;
+
+        function handleCMSSearch(event) {
+            const query = event.target.value.trim();
+            const resultsDiv = document.getElementById('cmsSearchResults');
+
+            if (cmsSearchTimeout) {
+                clearTimeout(cmsSearchTimeout);
+            }
+
+            if (query.length < 2) {
+                resultsDiv.classList.remove('show');
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            resultsDiv.classList.add('show');
+            resultsDiv.innerHTML = '<div style="padding: 1rem; text-align: center;"><i class="ti ti-loader"></i> Searching...</div>';
+
+            cmsSearchTimeout = setTimeout(() => {
+                fetch(`<?php echo $base_url; ?>/cms/search?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.results.length > 0) {
+                            let html = '<ul>';
+
+                            data.results.forEach(item => {
+                                html += `
+                            <li>
+                                <a href="<?php echo $base_url; ?>${item.url}" onclick="closeCMSSearch()">
+                                    <i class="${item.icon} search-icon"></i>
+                                    <div class="search-content">
+                                        <div class="search-title">${escapeHtml(item.title)}</div>
+                                        <div class="search-meta">
+                                            <span class="search-type">${item.type}</span>
+                                            ${item.preview ? ' - ' + escapeHtml(item.preview) : ''}
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        `;
+                            });
+
+                            html += '</ul>';
+                            html += `<div class="cms-search-footer">
+                        Found ${data.count} result${data.count > 1 ? 's' : ''}
+                    </div>`;
+
+                            resultsDiv.innerHTML = html;
+                        } else {
+                            resultsDiv.innerHTML = '<div style="padding: 1rem; text-align: center; color: #666;"><i class="ti ti-search"></i> No results found</div>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        resultsDiv.innerHTML = '<div style="padding: 1rem; text-align: center; color: #d32f2f;"><i class="ti ti-alert-circle"></i> Search error</div>';
+                    });
+            }, 500);
+        }
+
+        function handleCMSSearchFocus() {
+            const input = document.getElementById('cmsSearchInput');
+            const resultsDiv = document.getElementById('cmsSearchResults');
+
+            if (input.value.length >= 2 && resultsDiv.innerHTML) {
+                resultsDiv.classList.add('show');
+            }
+        }
+
+        function closeCMSSearch() {
+            const resultsDiv = document.getElementById('cmsSearchResults');
+            resultsDiv.classList.remove('show');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.addEventListener('click', function(event) {
+            const searchContainer = document.querySelector('.cms-search-container');
+            const resultsDiv = document.getElementById('cmsSearchResults');
+
+            if (searchContainer && !searchContainer.contains(event.target)) {
+                if (resultsDiv) {
+                    resultsDiv.classList.remove('show');
+                }
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeCMSSearch();
+            }
+        });
+    </script>
