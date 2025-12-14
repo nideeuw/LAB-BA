@@ -33,6 +33,49 @@ class ContactModel
     }
 
     /**
+     * Get contacts with pagination
+     */
+    public static function getContactsPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "
+                SELECT * 
+                FROM contact 
+                ORDER BY created_on DESC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated contacts error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of contacts
+     */
+    public static function getTotalContacts($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM contact";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total contacts error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get contact by ID
      */
     public static function getContactById($id, $conn)
@@ -132,14 +175,11 @@ class ContactModel
     public static function setActiveContact($id, $conn)
     {
         try {
-            // Start transaction
             $conn->beginTransaction();
 
-            // Deactivate all contacts
             $query1 = 'UPDATE contact SET is_active = FALSE';
             $conn->exec($query1);
 
-            // Activate selected contact
             $query2 = 'UPDATE contact SET is_active = TRUE WHERE id = ?';
             $stmt = $conn->prepare($query2);
             $stmt->execute([$id]);

@@ -5,13 +5,23 @@ class RoadmapController extends Controller
     public function index($conn, $params = [])
     {
         checkLogin();
-        $roadmaps = RoadmapModel::getAllRoadmap($conn);
+
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = RoadmapModel::getTotalRoadmap($conn);
+        $roadmaps = RoadmapModel::getRoadmapPaginated($conn, $page, $pageSize);
+        $dataLength = count($roadmaps);
 
         $data = [
             'page_title' => 'Roadmap Management',
             'active_page' => 'roadmap',
             'base_url' => getBaseUrl(),
             'roadmaps' => $roadmaps,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
@@ -84,6 +94,7 @@ class RoadmapController extends Controller
         if (!$roadmap) {
             setFlash('danger', 'Roadmap not found');
             redirect('/cms/roadmap');
+            return;
         }
 
         $data = [

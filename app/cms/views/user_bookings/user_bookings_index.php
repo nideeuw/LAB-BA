@@ -29,7 +29,7 @@ include __DIR__ . '/../layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="usersTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -106,6 +106,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
@@ -114,18 +117,5 @@ include __DIR__ . '/../layout/sidebar.php';
 </div>
 
 <?php
-$page_scripts = '
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script>
-$(document).ready(function() {
-    $("#usersTable").DataTable({
-        order: [[0, "desc"]],
-        pageLength: 25
-    });
-});
-</script>
-';
 include __DIR__ . '/../layout/footer.php';
 ?>

@@ -2,29 +2,32 @@
 
 class ContactController extends Controller
 {
-    /**
-     * Display contacts list (CMS)
-     */
     public function index($conn)
     {
         checkLogin();
 
-        $contacts = ContactModel::getAllContacts($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = ContactModel::getTotalContacts($conn);
+        $contacts = ContactModel::getContactsPaginated($conn, $page, $pageSize);
+        $dataLength = count($contacts);
 
         $data = [
             'page_title' => 'Contact Management',
             'active_page' => 'contact',
             'base_url' => getBaseUrl(),
             'contacts' => $contacts,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/contact/contact_index', $data);
     }
 
-    /**
-     * Show add contact form
-     */
     public function add($conn)
     {
         checkLogin();
@@ -39,9 +42,6 @@ class ContactController extends Controller
         $this->view('cms/views/contact/contact_create', $data);
     }
 
-    /**
-     * Store new contact
-     */
     public function store($conn)
     {
         checkLogin();
@@ -52,7 +52,6 @@ class ContactController extends Controller
 
         $errors = [];
 
-        // Validation
         if (empty($_POST['email'])) {
             $errors[] = 'Email is required';
         } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
@@ -90,9 +89,6 @@ class ContactController extends Controller
         }
     }
 
-    /**
-     * Show edit contact form
-     */
     public function edit($conn, $params = [])
     {
         checkLogin();
@@ -117,9 +113,6 @@ class ContactController extends Controller
         $this->view('cms/views/contact/contact_edit', $data);
     }
 
-    /**
-     * Update contact
-     */
     public function update($conn, $params = [])
     {
         checkLogin();
@@ -169,9 +162,6 @@ class ContactController extends Controller
         }
     }
 
-    /**
-     * Delete contact
-     */
     public function delete($conn, $params = [])
     {
         checkLogin();
@@ -189,9 +179,6 @@ class ContactController extends Controller
         redirect('/cms/contact');
     }
 
-    /**
-     * Set contact as active
-     */
     public function setActive($conn, $params = [])
     {
         checkLogin();

@@ -2,24 +2,33 @@
 
 class UserBookingsController extends Controller
 {
-    public function index($conn, $params = [])
+    public function index($conn)
     {
         checkLogin();
 
-        $users = LabBookingsModel::getAllUserBookings($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = LabBookingsModel::getTotalUserBookings($conn);
+        $users = LabBookingsModel::getUserBookingsPaginated($conn, $page, $pageSize);
+        $dataLength = count($users);
 
         $data = [
             'page_title' => 'User Bookings Management',
             'active_page' => 'user_bookings',
             'base_url' => getBaseUrl(),
             'users' => $users,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/user_bookings/user_bookings_index', $data);
     }
 
-    public function add($conn, $params = [])
+    public function add($conn)
     {
         checkLogin();
 
@@ -33,7 +42,7 @@ class UserBookingsController extends Controller
         $this->view('cms/views/user_bookings/user_bookings_create', $data);
     }
 
-    public function store($conn, $params = [])
+    public function store($conn)
     {
         checkLogin();
 

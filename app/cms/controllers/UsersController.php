@@ -6,13 +6,22 @@ class UsersController extends Controller
     {
         checkLogin();
 
-        $users = UserModel::getAllUsers($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = UserModel::getTotalUsers($conn);
+        $users = UserModel::getUsersPaginated($conn, $page, $pageSize);
+        $dataLength = count($users);
 
         $data = [
             'page_title' => 'User Management',
             'active_page' => 'users',
             'base_url' => getBaseUrl(),
             'users' => $users,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
@@ -77,7 +86,6 @@ class UsersController extends Controller
     {
         checkLogin();
 
-        // Extract ID dari params
         $id = $params['id'] ?? 0;
 
         $user = UserModel::getUserById($id, $conn);
@@ -102,7 +110,6 @@ class UsersController extends Controller
     {
         checkLogin();
 
-        // Extract ID dari params
         $id = $params['id'] ?? 0;
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -115,7 +122,6 @@ class UsersController extends Controller
             $errors[] = 'Username is required';
         }
 
-        // Password optional saat update
         if (!empty($_POST['password']) && strlen($_POST['password']) < 6) {
             $errors[] = 'Password must be at least 6 characters';
         }
@@ -148,7 +154,6 @@ class UsersController extends Controller
     {
         checkLogin();
 
-        // Extract ID dari params
         $id = $params['id'] ?? 0;
 
         // Prevent deleting yourself

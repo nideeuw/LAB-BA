@@ -27,6 +27,54 @@ class ResearchesModel
     }
 
     /**
+     * Get researches with pagination
+     */
+    public static function getResearchesPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "
+                SELECT 
+                    r.*,
+                    m.nama as member_name,
+                    m.gelar_depan,
+                    m.gelar_belakang
+                FROM researches r
+                LEFT JOIN members m ON r.id_members = m.id
+                ORDER BY r.title ASC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated researches error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of researches
+     */
+    public static function getTotalResearches($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM researches";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total researches error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get active researches (for landing page)
      */
     public static function getActiveResearches($conn)
@@ -139,21 +187,20 @@ class ResearchesModel
     {
         try {
             $query = "
-                INSERT INTO researches (
-                    id_members, title, deskripsi, year, is_active,
-                    created_by, created_on
-                ) VALUES (
-                    ?, ?, ?, ?, ?,
-                    ?, NOW()
-                )
-            ";
+            INSERT INTO researches (
+                id_members, title, deskripsi, is_active,
+                created_by, created_on
+            ) VALUES (
+                ?, ?, ?, ?,
+                ?, NOW()
+            )
+        ";
 
             $stmt = $conn->prepare($query);
             $result = $stmt->execute([
                 $data['id_members'],
                 $data['title'],
                 $data['deskripsi'] ?? null,
-                $data['year'] ?? null,
                 $data['is_active'] ?? true,
                 $_SESSION['user_name'] ?? 'system'
             ]);
@@ -175,23 +222,21 @@ class ResearchesModel
     {
         try {
             $query = "
-                UPDATE researches SET 
-                    id_members = ?,
-                    title = ?,
-                    deskripsi = ?,
-                    year = ?,
-                    is_active = ?,
-                    modified_by = ?,
-                    modified_on = NOW()
-                WHERE id = ?
-            ";
+            UPDATE researches SET 
+                id_members = ?,
+                title = ?,
+                deskripsi = ?,
+                is_active = ?,
+                modified_by = ?,
+                modified_on = NOW()
+            WHERE id = ?
+        ";
 
             $stmt = $conn->prepare($query);
             return $stmt->execute([
                 $data['id_members'],
                 $data['title'],
                 $data['deskripsi'] ?? null,
-                $data['year'] ?? null,
                 $data['is_active'] ? 'true' : 'false',
                 $_SESSION['user_name'] ?? 'system',
                 $id

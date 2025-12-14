@@ -2,29 +2,32 @@
 
 class ResearchScopeController extends Controller
 {
-    /**
-     * Index - List all research scopes
-     */
     public function index($conn, $params = [])
     {
         checkLogin();
 
-        $researchScopes = ResearchScopeModel::getAllResearchScopes($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = ResearchScopeModel::getTotalResearchScopes($conn);
+        $researchScopes = ResearchScopeModel::getResearchScopesPaginated($conn, $page, $pageSize);
+        $dataLength = count($researchScopes);
 
         $data = [
             'page_title' => 'Research Scope Management',
             'active_page' => 'research_scope',
             'base_url' => getBaseUrl(),
             'researchScopes' => $researchScopes,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/research_scope/research_scope_index', $data);
     }
 
-    /**
-     * Add - Show create form
-     */
     public function add($conn, $params = [])
     {
         checkLogin();
@@ -39,9 +42,6 @@ class ResearchScopeController extends Controller
         $this->view('cms/views/research_scope/research_scope_create', $data);
     }
 
-    /**
-     * Store - Create new research scope
-     */
     public function store($conn, $params = [])
     {
         checkLogin();
@@ -56,7 +56,6 @@ class ResearchScopeController extends Controller
             $errors[] = 'Title is required';
         }
 
-        // Image is required for new entry
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             $errors[] = 'Image is required';
         }
@@ -66,7 +65,6 @@ class ResearchScopeController extends Controller
             redirect('/cms/research_scope/add');
         }
 
-        // Upload image
         $imagePath = ResearchScopeModel::uploadImage($_FILES['image']);
         if (!$imagePath) {
             setFlash('danger', 'Failed to upload image. Check file type and size (max 5MB)');
@@ -91,9 +89,6 @@ class ResearchScopeController extends Controller
         redirect('/cms/research_scope');
     }
 
-    /**
-     * Edit - Show edit form
-     */
     public function edit($conn, $params = [])
     {
         checkLogin();
@@ -103,6 +98,7 @@ class ResearchScopeController extends Controller
         if (!$id) {
             setFlash('danger', 'Invalid ID');
             redirect('/cms/research_scope');
+            return;
         }
 
         $researchScope = ResearchScopeModel::getResearchScopeById($id, $conn);
@@ -110,6 +106,7 @@ class ResearchScopeController extends Controller
         if (!$researchScope) {
             setFlash('danger', 'Research Scope not found');
             redirect('/cms/research_scope');
+            return;
         }
 
         $data = [
@@ -123,9 +120,6 @@ class ResearchScopeController extends Controller
         $this->view('cms/views/research_scope/research_scope_edit', $data);
     }
 
-    /**
-     * Update - Update research scope
-     */
     public function update($conn, $params = [])
     {
         checkLogin();
@@ -154,11 +148,9 @@ class ResearchScopeController extends Controller
             'is_active' => isset($_POST['is_active']) ? true : false
         ];
 
-        // Handle image upload if new image provided
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = ResearchScopeModel::uploadImage($_FILES['image']);
             if ($imagePath) {
-                // Delete old image
                 if (!empty($researchScope['image'])) {
                     $oldImagePath = ROOT_PATH . 'assets/' . $researchScope['image'];
                     if (file_exists($oldImagePath)) {
@@ -183,9 +175,6 @@ class ResearchScopeController extends Controller
         redirect('/cms/research_scope');
     }
 
-    /**
-     * Delete - Delete research scope
-     */
     public function delete($conn, $params = [])
     {
         checkLogin();
@@ -204,7 +193,6 @@ class ResearchScopeController extends Controller
             redirect('/cms/research_scope');
         }
 
-        // Delete image file
         if (!empty($researchScope['image'])) {
             $imagePath = ROOT_PATH . 'assets/' . $researchScope['image'];
             if (file_exists($imagePath)) {

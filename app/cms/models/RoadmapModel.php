@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Model: RoadmapModel
- * Location: app/cms/models/RoadmapModel.php
- * Purpose: Manage Roadmap data
- */
-
 class RoadmapModel
 {
     /**
@@ -20,6 +14,46 @@ class RoadmapModel
         } catch (PDOException $e) {
             error_log("Get all roadmap error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get roadmap with pagination
+     */
+    public static function getRoadmapPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "SELECT * FROM roadmap 
+                      ORDER BY sort_order ASC, created_on DESC 
+                      LIMIT :limit OFFSET :offset";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated roadmap error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of roadmap
+     */
+    public static function getTotalRoadmap($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM roadmap";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total roadmap error: " . $e->getMessage());
+            return 0;
         }
     }
 

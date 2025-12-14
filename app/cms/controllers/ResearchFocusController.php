@@ -1,36 +1,33 @@
 <?php
 
-/**
- * Controller: ResearchFocusController
- * Location: app/cms/controllers/ResearchFocusController.php
- * Purpose: Manage Research Focus CRUD
- */
-
 class ResearchFocusController extends Controller
 {
-    /**
-     * Display list of research focus items
-     */
     public function index($conn, $params = [])
     {
         checkLogin();
 
-        $focusItems = ResearchFocusModel::getAllResearchFocus($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = ResearchFocusModel::getTotalResearchFocus($conn);
+        $focusItems = ResearchFocusModel::getResearchFocusPaginated($conn, $page, $pageSize);
+        $dataLength = count($focusItems);
 
         $data = [
             'page_title' => 'Research Focus Management',
             'active_page' => 'research_focus',
             'base_url' => getBaseUrl(),
             'focusItems' => $focusItems,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/research_focus/research_focus_index', $data);
     }
 
-    /**
-     * Show create form
-     */
     public function add($conn, $params = [])
     {
         checkLogin();
@@ -48,9 +45,6 @@ class ResearchFocusController extends Controller
         $this->view('cms/views/research_focus/research_focus_create', $data);
     }
 
-    /**
-     * Store new research focus
-     */
     public function store($conn, $params = [])
     {
         checkLogin();
@@ -97,9 +91,6 @@ class ResearchFocusController extends Controller
         }
     }
 
-    /**
-     * Show edit form
-     */
     public function edit($conn, $params = [])
     {
         checkLogin();
@@ -111,6 +102,7 @@ class ResearchFocusController extends Controller
         if (!$focus) {
             setFlash('danger', 'Research Focus not found');
             redirect('/cms/research_focus');
+            return;
         }
 
         $data = [
@@ -124,9 +116,6 @@ class ResearchFocusController extends Controller
         $this->view('cms/views/research_focus/research_focus_edit', $data);
     }
 
-    /**
-     * Update research focus
-     */
     public function update($conn, $params = [])
     {
         checkLogin();
@@ -175,9 +164,6 @@ class ResearchFocusController extends Controller
         }
     }
 
-    /**
-     * Delete research focus
-     */
     public function delete($conn, $params = [])
     {
         checkLogin();

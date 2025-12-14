@@ -2,24 +2,33 @@
 
 class GalleryController extends Controller
 {
-    public function index($conn, $params = [])
+    public function index($conn)
     {
         checkLogin();
 
-        $gallery = GalleryModel::getAllGallery($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = GalleryModel::getTotalGallery($conn);
+        $gallery = GalleryModel::getGalleryPaginated($conn, $page, $pageSize);
+        $dataLength = count($gallery);
 
         $data = [
             'page_title' => 'Gallery Management',
             'active_page' => 'gallery',
             'base_url' => getBaseUrl(),
             'gallery' => $gallery,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/gallery/gallery_index', $data);
     }
 
-    public function add($conn, $params = [])
+    public function add($conn)
     {
         checkLogin();
 
@@ -33,7 +42,7 @@ class GalleryController extends Controller
         $this->view('cms/views/gallery/gallery_create', $data);
     }
 
-    public function store($conn, $params = [])
+    public function store($conn)
     {
         checkLogin();
 
@@ -47,7 +56,6 @@ class GalleryController extends Controller
             $errors[] = 'Title is required';
         }
 
-        // Validate image upload (REQUIRED for new gallery)
         $imagePath = null;
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             $errors[] = 'Image is required';
@@ -68,7 +76,7 @@ class GalleryController extends Controller
             'date' => !empty($_POST['date']) ? $_POST['date'] : date('Y-m-d'),
             'description' => trim($_POST['description'] ?? ''),
             'image' => $imagePath,
-            'is_active' => ($_POST['is_active'] ?? '0') == '1'
+            'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
         $result = GalleryModel::createGallery($galleryData, $conn);
@@ -116,11 +124,6 @@ class GalleryController extends Controller
             redirect('/cms/gallery');
         }
 
-        error_log("=== GALLERY UPDATE DEBUG ===");
-        error_log("ID: " . $id);
-        error_log("POST is_active: " . ($_POST['is_active'] ?? 'NOT SET'));
-        error_log("POST data: " . print_r($_POST, true));
-
         $errors = [];
 
         if (empty($_POST['title'])) {
@@ -132,24 +135,16 @@ class GalleryController extends Controller
             redirect('/cms/gallery/edit/' . $id);
         }
 
-        $isActiveValue = ($_POST['is_active'] ?? '0') == '1';
-
-        error_log("Processed is_active: " . ($isActiveValue ? 'TRUE' : 'FALSE'));
-
         $galleryData = [
             'title' => trim($_POST['title']),
             'date' => !empty($_POST['date']) ? $_POST['date'] : null,
             'description' => trim($_POST['description'] ?? ''),
-            'is_active' => $isActiveValue
+            'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
-        error_log("Gallery data: " . print_r($galleryData, true));
-
-        // Handle image upload if new image provided
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = GalleryModel::uploadImage($_FILES['image']);
             if ($imagePath) {
-                // Delete old image
                 $oldGallery = GalleryModel::getGalleryById($id, $conn);
                 if (!empty($oldGallery['image'])) {
                     $oldImagePath = ROOT_PATH . 'assets/' . $oldGallery['image'];
@@ -161,21 +156,13 @@ class GalleryController extends Controller
             }
         }
 
-        try {
-            $result = GalleryModel::updateGallery($id, $galleryData, $conn);
+        $result = GalleryModel::updateGallery($id, $galleryData, $conn);
 
-            error_log("Update result: " . ($result ? 'SUCCESS' : 'FAILED'));
-
-            if ($result) {
-                setFlash('success', 'Gallery item updated successfully!');
-                redirect('/cms/gallery');
-            } else {
-                setFlash('danger', 'Failed to update gallery item. Check error logs.');
-                redirect('/cms/gallery/edit/' . $id);
-            }
-        } catch (Exception $e) {
-            error_log("Update exception: " . $e->getMessage());
-            setFlash('danger', 'Error: ' . $e->getMessage());
+        if ($result) {
+            setFlash('success', 'Gallery item updated successfully!');
+            redirect('/cms/gallery');
+        } else {
+            setFlash('danger', 'Failed to update gallery item');
             redirect('/cms/gallery/edit/' . $id);
         }
     }

@@ -27,6 +27,54 @@ class PublicationsModel
     }
 
     /**
+     * Get publications with pagination
+     */
+    public static function getPublicationsPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "
+                SELECT 
+                    p.*,
+                    m.nama as member_name,
+                    m.gelar_depan,
+                    m.gelar_belakang
+                FROM publications p
+                LEFT JOIN members m ON p.id_members = m.id
+                ORDER BY p.year DESC, p.title ASC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated publications error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of publications
+     */
+    public static function getTotalPublications($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM publications";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total publications error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get active publications (for landing page)
      */
     public static function getActivePublications($conn, $year_filter = null, $member_filter = null)

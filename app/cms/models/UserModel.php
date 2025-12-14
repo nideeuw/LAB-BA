@@ -1,10 +1,5 @@
 <?php
 
-/**
- * User Model
- * File: app/cms/models/UserModel.php
- */
-
 class UserModel
 {
     /**
@@ -87,6 +82,48 @@ class UserModel
         } catch (PDOException $e) {
             error_log("Get all users error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get users with pagination
+     */
+    public static function getUsersPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "
+                SELECT * FROM users
+                ORDER BY id DESC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated users error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of users
+     */
+    public static function getTotalUsers($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM users";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total users error: " . $e->getMessage());
+            return 0;
         }
     }
 

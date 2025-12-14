@@ -1,8 +1,4 @@
 <?php
-/**
- * Profile Lab Model
- * File: app/cms/models/ProfileLabModel.php
- */
 
 class ProfileLabModel
 {
@@ -18,6 +14,46 @@ class ProfileLabModel
         } catch (PDOException $e) {
             error_log("Get all profile lab error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get profile labs with pagination
+     */
+    public static function getProfileLabsPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "SELECT * FROM profile_lab 
+                      ORDER BY created_on DESC 
+                      LIMIT :limit OFFSET :offset";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated profile labs error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of profile labs
+     */
+    public static function getTotalProfileLabs($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM profile_lab";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total profile labs error: " . $e->getMessage());
+            return 0;
         }
     }
 
@@ -98,7 +134,6 @@ class ProfileLabModel
                         modified_by = :modified_by,
                         modified_on = NOW()";
 
-            // Only update image if new image provided
             if (isset($data['image'])) {
                 $query .= ", image = :image";
             }
@@ -131,15 +166,12 @@ class ProfileLabModel
     public static function deleteProfileLab($id, $conn)
     {
         try {
-            // Get image path before delete
             $profileLab = self::getProfileLabById($id, $conn);
 
-            // Delete from database
             $query = "DELETE FROM profile_lab WHERE id = :id";
             $stmt = $conn->prepare($query);
             $result = $stmt->execute(['id' => $id]);
 
-            // Delete image file if exists
             if ($result && !empty($profileLab['image'])) {
                 $imagePath = ROOT_PATH . 'assets/' . $profileLab['image'];
                 if (file_exists($imagePath)) {
@@ -177,10 +209,8 @@ class ProfileLabModel
         try {
             $conn->beginTransaction();
 
-            // Deactivate all
             self::deactivateAll($conn);
 
-            // Activate selected
             $query = "UPDATE profile_lab SET is_active = TRUE WHERE id = :id";
             $stmt = $conn->prepare($query);
             $stmt->execute(['id' => $id]);
@@ -200,17 +230,14 @@ class ProfileLabModel
     public static function uploadImage($file)
     {
         try {
-            // Validate file
             if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
                 return false;
             }
 
-            // Check file size (max 2MB)
             if ($file['size'] > 2 * 1024 * 1024) {
                 return false;
             }
 
-            // Check file type
             $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $file['tmp_name']);
@@ -225,14 +252,11 @@ class ProfileLabModel
                 mkdir($uploadDir, 0755, true);
             }
 
-            // Generate unique filename
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = uniqid() . '_' . time() . '.' . $extension;
             $filepath = $uploadDir . '/' . $filename;
 
-            // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                // Return relative path for database
                 return 'uploads/profile_lab/' . $filename;
             }
 

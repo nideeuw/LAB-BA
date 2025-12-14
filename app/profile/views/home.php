@@ -60,27 +60,20 @@ include __DIR__ . '/layout/navbar.php';
                             <h2 class="section-title">MISI</h2>
                             <div class="box-content">
                                 <?php
-                                // Parse misi - jika ada numbering atau line breaks
                                 $misiText = $visiMisi['misi'];
 
-                                // Check if misi contains numbered list pattern (1., 2., etc)
-                                if (preg_match('/^\s*\d+\.\s/m', $misiText)) {
-                                    // Split by line and create ordered list
-                                    $misiLines = preg_split('/\n|\r\n/', $misiText);
-                                    echo '<ol>';
-                                    foreach ($misiLines as $line) {
-                                        $line = trim($line);
-                                        if (!empty($line)) {
-                                            // Remove number prefix if exists
-                                            $line = preg_replace('/^\d+\.\s*/', '', $line);
-                                            echo '<li>' . htmlspecialchars($line) . '</li>';
-                                        }
+                                // Just display as ordered list without checking pattern
+                                $misiLines = preg_split('/\n|\r\n/', $misiText);
+                                echo '<ol>';
+                                foreach ($misiLines as $line) {
+                                    $line = trim($line);
+                                    if (!empty($line)) {
+                                        // Remove number prefix if exists (1., 2., etc)
+                                        $line = preg_replace('/^\d+\.\s*/', '', $line);
+                                        echo '<li>' . htmlspecialchars($line) . '</li>';
                                     }
-                                    echo '</ol>';
-                                } else {
-                                    // Just display as paragraph
-                                    echo '<p>' . nl2br(htmlspecialchars($misiText)) . '</p>';
                                 }
+                                echo '</ol>';
                                 ?>
                             </div>
                         </div>

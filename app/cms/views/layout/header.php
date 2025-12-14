@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <link rel="icon" href="<?php echo $base_url; ?>/assets/images/favicon.svg" type="image/x-icon">
+    <link rel="icon" href="<?php echo $base_url; ?>/assets/img/logo.png" type="image/png">
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/inter/inter.css" id="main-font-link">
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/tabler-icons.min.css">
     <link rel="stylesheet" href="<?php echo $base_url; ?>/assets/fonts/feather.css">
@@ -69,6 +69,17 @@
 
             <div class="ms-auto">
                 <ul class="list-unstyled">
+                    <!-- View Website Button -->
+                    <li class="pc-h-item d-none d-sm-inline-flex">
+                        <a href="<?php echo $base_url; ?>" 
+                           target="_blank" 
+                           class="btn btn-sm btn-light-primary me-2"
+                           title="View Public Website">
+                            <i class="ti ti-world me-1"></i>
+                            <span class="d-none d-md-inline-block">View Website</span>
+                        </a>
+                    </li>
+                    
                     <li class="dropdown pc-h-item header-user-profile">
                         <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                             <?php 
@@ -94,13 +105,6 @@
                                             <span><?php echo htmlspecialchars($userProfile['email'] ?? 'No email'); ?></span>
                                         </div>
                                     </div>
-                                    <hr class="border-secondary border-opacity-50">
-                                    <a href="<?php echo $base_url; ?>/cms/profile" class="dropdown-item">
-                                        <span><i class="ti ti-user"></i><span>My Profile</span></span>
-                                    </a>
-                                    <a href="<?php echo $base_url; ?>/cms/settings" class="dropdown-item">
-                                        <span><i class="ti ti-settings"></i><span>Settings</span></span>
-                                    </a>
                                     <hr class="border-secondary border-opacity-50">
                                     <div class="d-grid mb-3">
                                         <a href="<?php echo $base_url; ?>/cms/logout" class="btn btn-primary">

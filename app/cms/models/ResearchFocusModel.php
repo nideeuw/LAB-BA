@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Model: ResearchFocusModel
- * Location: app/cms/models/ResearchFocusModel.php
- * Purpose: Manage Research Focus data
- */
-
 class ResearchFocusModel
 {
     /**
@@ -20,6 +14,46 @@ class ResearchFocusModel
         } catch (PDOException $e) {
             error_log("Get all research focus error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get research focus with pagination
+     */
+    public static function getResearchFocusPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "SELECT * FROM research_focus 
+                      ORDER BY sort_order ASC, created_on DESC 
+                      LIMIT :limit OFFSET :offset";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated research focus error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of research focus
+     */
+    public static function getTotalResearchFocus($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM research_focus";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total research focus error: " . $e->getMessage());
+            return 0;
         }
     }
 

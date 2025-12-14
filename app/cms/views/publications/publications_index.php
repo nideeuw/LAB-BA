@@ -1,38 +1,23 @@
 <?php
-
-/**
- * Publications List View (CMS)
- * File: app/cms/views/publications/publications_index.php
- */
-
-// SET PAGE TITLE
 $page_title = 'Publications Management';
-
-// Include layout
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
 ?>
 
-<!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pc-content">
-
-        <!-- [ breadcrumb ] start -->
         <?php include __DIR__ . '/../layout/breadcrumb.php'; ?>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- Flash Message -->
         <?php
         $flash = getFlash();
         if ($flash):
         ?>
             <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show" role="alert">
                 <?php echo $flash['message']; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <!-- [ Main Content ] start -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -44,7 +29,7 @@ include __DIR__ . '/../layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="publicationsTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -78,7 +63,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 <td>
                                                     <?php if (!empty($pub['member_name'])): ?>
                                                         <span class="badge bg-light-info">
-                                                            <?php echo htmlspecialchars(PublicationsModel::getMemberFullName($pub)); ?>
+                                                            <?php echo htmlspecialchars($pub['member_full_name']); ?>
                                                         </span>
                                                     <?php else: ?>
                                                         <span class="text-muted">-</span>
@@ -116,14 +101,11 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="btn-group" role="group">
-                                                        <!-- Edit -->
                                                         <a href="<?php echo $base_url; ?>/cms/publications/edit/<?php echo $pub['id']; ?>"
                                                             class="btn btn-sm btn-info"
                                                             title="Edit">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
-
-                                                        <!-- Delete -->
                                                         <a href="<?php echo $base_url; ?>/cms/publications/delete/<?php echo $pub['id']; ?>"
                                                             class="btn btn-sm btn-danger"
                                                             onclick="return confirm('Are you sure you want to delete this publication?')"
@@ -150,40 +132,16 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
         </div>
-        <!-- [ Main Content ] end -->
-
     </div>
 </div>
 
 <?php
-// Page specific scripts
-$page_scripts = '
-<!-- DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $("#publicationsTable").DataTable({
-        order: [[4, "desc"], [1, "asc"]], // Sort by year DESC, then title ASC
-        pageLength: 25,
-        language: {
-            search: "Search publications:",
-            lengthMenu: "Show _MENU_ publications per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ publications",
-            infoEmpty: "No publications found",
-            infoFiltered: "(filtered from _MAX_ total publications)",
-            zeroRecords: "No matching publications found"
-        }
-    });
-});
-</script>
-';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

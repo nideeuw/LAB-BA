@@ -1,23 +1,27 @@
 <?php
 
-/**
- * Profile Lab Controller
- * File: app/cms/controllers/ProfileLabController.php
- */
-
 class ProfileLabController extends Controller
 {
     public function index($conn, $params = [])
     {
         checkLogin();
 
-        $profiles = ProfileLabModel::getAllProfileLab($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = ProfileLabModel::getTotalProfileLabs($conn);
+        $profiles = ProfileLabModel::getProfileLabsPaginated($conn, $page, $pageSize);
+        $dataLength = count($profiles);
 
         $data = [
             'page_title' => 'Profile Lab Management',
             'active_page' => 'profile_lab',
             'base_url' => getBaseUrl(),
             'profiles' => $profiles,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
@@ -56,7 +60,6 @@ class ProfileLabController extends Controller
             $errors[] = 'Description is required';
         }
 
-        // Validate image upload
         $imagePath = null;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = ProfileLabModel::uploadImage($_FILES['image']);
@@ -79,7 +82,6 @@ class ProfileLabController extends Controller
             'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
-        // If set as active, deactivate others first
         if ($profileData['is_active']) {
             ProfileLabModel::setActiveProfileLab(0, $conn);
         }
@@ -95,18 +97,18 @@ class ProfileLabController extends Controller
         }
     }
 
-    public function edit($conn, $params = []) // ✅ FIX: Add $params
+    public function edit($conn, $params = [])
     {
         checkLogin();
 
-        $id = $params['id'] ?? 0; // ✅ FIX: Get ID from params
+        $id = $params['id'] ?? 0;
 
         $profile = ProfileLabModel::getProfileLabById($id, $conn);
 
         if (!$profile) {
             setFlash('danger', 'Profile Lab not found');
             redirect('/cms/profile_lab');
-            return; // ✅ Important!
+            return;
         }
 
         $data = [
@@ -120,11 +122,11 @@ class ProfileLabController extends Controller
         $this->view('cms/views/profile_lab/profile_lab_edit', $data);
     }
 
-    public function update($conn, $params = []) // ✅ FIX: Add $params
+    public function update($conn, $params = [])
     {
         checkLogin();
 
-        $id = $params['id'] ?? 0; // ✅ FIX: Get ID from params
+        $id = $params['id'] ?? 0;
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/cms/profile_lab');
@@ -151,11 +153,9 @@ class ProfileLabController extends Controller
             'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
-        // Handle image upload if new image provided
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = ProfileLabModel::uploadImage($_FILES['image']);
             if ($imagePath) {
-                // Delete old image
                 $oldProfile = ProfileLabModel::getProfileLabById($id, $conn);
                 if (!empty($oldProfile['image'])) {
                     $oldImagePath = ROOT_PATH . 'assets/' . $oldProfile['image'];
@@ -167,7 +167,6 @@ class ProfileLabController extends Controller
             }
         }
 
-        // If set as active, deactivate others first
         if ($profileData['is_active']) {
             ProfileLabModel::setActiveProfileLab($id, $conn);
         }
@@ -183,11 +182,11 @@ class ProfileLabController extends Controller
         }
     }
 
-    public function delete($conn, $params = []) // ✅ FIX: Add $params
+    public function delete($conn, $params = [])
     {
         checkLogin();
 
-        $id = $params['id'] ?? 0; // ✅ FIX: Get ID from params
+        $id = $params['id'] ?? 0;
 
         $result = ProfileLabModel::deleteProfileLab($id, $conn);
 
@@ -200,11 +199,11 @@ class ProfileLabController extends Controller
         redirect('/cms/profile_lab');
     }
 
-    public function setActive($conn, $params = []) // ✅ FIX: Add $params
+    public function setActive($conn, $params = [])
     {
         checkLogin();
 
-        $id = $params['id'] ?? 0; // ✅ FIX: Get ID from params
+        $id = $params['id'] ?? 0;
 
         $result = ProfileLabModel::setActiveProfileLab($id, $conn);
 

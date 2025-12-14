@@ -44,7 +44,7 @@ include __DIR__ . '/../layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="rolesTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -143,6 +143,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
@@ -153,30 +156,5 @@ include __DIR__ . '/../layout/sidebar.php';
 </div>
 
 <?php
-// Page specific scripts
-$page_scripts = '
-<!-- DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $("#rolesTable").DataTable({
-        order: [[0, "desc"]], // Sort by ID descending
-        pageLength: 25,
-        language: {
-            search: "Search roles:",
-            lengthMenu: "Show _MENU_ roles per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ roles",
-            infoEmpty: "No roles found",
-            infoFiltered: "(filtered from _MAX_ total roles)",
-            zeroRecords: "No matching roles found"
-        }
-    });
-});
-</script>
-';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

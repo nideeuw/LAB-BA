@@ -2,29 +2,32 @@
 
 class VisiMisiController extends Controller
 {
-    /**
-     * Index - List all visi misi
-     */
     public function index($conn, $params = [])
     {
         checkLogin();
 
-        $visiMisiList = VisiMisiModel::getAllVisiMisi($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = VisiMisiModel::getTotalVisiMisi($conn);
+        $visiMisiList = VisiMisiModel::getVisiMisiPaginated($conn, $page, $pageSize);
+        $dataLength = count($visiMisiList);
 
         $data = [
             'page_title' => 'Visi Misi Management',
             'active_page' => 'visi_misi',
             'base_url' => getBaseUrl(),
             'visiMisiList' => $visiMisiList,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/visi_misi/visi_misi_index', $data);
     }
 
-    /**
-     * Add - Show create form
-     */
     public function add($conn, $params = [])
     {
         checkLogin();
@@ -39,9 +42,6 @@ class VisiMisiController extends Controller
         $this->view('cms/views/visi_misi/visi_misi_create', $data);
     }
 
-    /**
-     * Store - Create new visi misi
-     */
     public function store($conn, $params = [])
     {
         checkLogin();
@@ -82,9 +82,6 @@ class VisiMisiController extends Controller
         redirect('/cms/visi_misi');
     }
 
-    /**
-     * Edit - Show edit form
-     */
     public function edit($conn, $params = [])
     {
         checkLogin();
@@ -94,6 +91,7 @@ class VisiMisiController extends Controller
         if (!$id) {
             setFlash('danger', 'Invalid ID');
             redirect('/cms/visi_misi');
+            return;
         }
 
         $visiMisi = VisiMisiModel::getVisiMisiById($id, $conn);
@@ -101,6 +99,7 @@ class VisiMisiController extends Controller
         if (!$visiMisi) {
             setFlash('danger', 'Visi Misi not found');
             redirect('/cms/visi_misi');
+            return;
         }
 
         $data = [
@@ -114,9 +113,6 @@ class VisiMisiController extends Controller
         $this->view('cms/views/visi_misi/visi_misi_edit', $data);
     }
 
-    /**
-     * Update - Update visi misi
-     */
     public function update($conn, $params = [])
     {
         checkLogin();
@@ -171,9 +167,6 @@ class VisiMisiController extends Controller
         redirect('/cms/visi_misi');
     }
 
-    /**
-     * Delete - Delete visi misi
-     */
     public function delete($conn, $params = [])
     {
         checkLogin();

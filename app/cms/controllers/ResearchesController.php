@@ -2,34 +2,40 @@
 
 class ResearchesController extends Controller
 {
-    /**
-     * Display researches list (CMS)
-     */
     public function index($conn)
     {
         checkLogin();
 
-        $researches = ResearchesModel::getAllResearches($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = ResearchesModel::getTotalResearches($conn);
+        $researches = ResearchesModel::getResearchesPaginated($conn, $page, $pageSize);
+        $dataLength = count($researches);
+
+        foreach ($researches as &$research) {
+            $research['member_full_name'] = ResearchesModel::getMemberFullName($research);
+        }
 
         $data = [
             'page_title' => 'Researches Management',
             'active_page' => 'researches',
             'base_url' => getBaseUrl(),
             'researches' => $researches,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/researches/researches_index', $data);
     }
 
-    /**
-     * Show add research form
-     */
     public function add($conn)
     {
         checkLogin();
 
-        // Get active members for dropdown
         $members = MembersModel::getActiveMembers($conn);
 
         $data = [
@@ -43,9 +49,6 @@ class ResearchesController extends Controller
         $this->view('cms/views/researches/researches_create', $data);
     }
 
-    /**
-     * Store new research
-     */
     public function store($conn)
     {
         checkLogin();
@@ -56,7 +59,6 @@ class ResearchesController extends Controller
 
         $errors = [];
 
-        // Validation
         if (empty($_POST['id_members'])) {
             $errors[] = 'Member is required';
         }
@@ -73,7 +75,6 @@ class ResearchesController extends Controller
             'id_members' => $_POST['id_members'],
             'title' => trim($_POST['title']),
             'deskripsi' => trim($_POST['deskripsi'] ?? ''),
-            'year' => !empty($_POST['year']) ? $_POST['year'] : null,
             'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
@@ -88,9 +89,6 @@ class ResearchesController extends Controller
         }
     }
 
-    /**
-     * Show edit research form
-     */
     public function edit($conn, $params = [])
     {
         checkLogin();
@@ -104,7 +102,6 @@ class ResearchesController extends Controller
             redirect('/cms/researches');
         }
 
-        // Get active members for dropdown
         $members = MembersModel::getActiveMembers($conn);
 
         $data = [
@@ -119,9 +116,6 @@ class ResearchesController extends Controller
         $this->view('cms/views/researches/researches_edit', $data);
     }
 
-    /**
-     * Update research
-     */
     public function update($conn, $params = [])
     {
         checkLogin();
@@ -150,7 +144,6 @@ class ResearchesController extends Controller
             'id_members' => $_POST['id_members'],
             'title' => trim($_POST['title']),
             'deskripsi' => trim($_POST['deskripsi'] ?? ''),
-            'year' => !empty($_POST['year']) ? $_POST['year'] : null,
             'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
@@ -165,9 +158,6 @@ class ResearchesController extends Controller
         }
     }
 
-    /**
-     * Delete research
-     */
     public function delete($conn, $params = [])
     {
         checkLogin();

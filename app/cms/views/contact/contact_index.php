@@ -1,38 +1,23 @@
 <?php
-
-/**
- * Contact List View (CMS)
- * File: app/cms/views/contact/contact_index.php
- */
-
-// SET PAGE TITLE
 $page_title = 'Contact Management';
-
-// Include layout
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
 ?>
 
-<!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pc-content">
-
-        <!-- [ breadcrumb ] start -->
         <?php include __DIR__ . '/../layout/breadcrumb.php'; ?>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- Flash Message -->
         <?php
         $flash = getFlash();
         if ($flash):
         ?>
             <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show" role="alert">
                 <?php echo $flash['message']; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <!-- [ Main Content ] start -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -49,7 +34,7 @@ include __DIR__ . '/../layout/sidebar.php';
                         </div>
 
                         <div class="table-responsive">
-                            <table id="contactTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -100,7 +85,6 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 <td class="text-end">
                                                     <div class="btn-group" role="group">
                                                         <?php if (!$contact['is_active']): ?>
-                                                            <!-- Set Active -->
                                                             <a href="<?php echo $base_url; ?>/cms/contact/set-active/<?php echo $contact['id']; ?>"
                                                                 class="btn btn-sm btn-success"
                                                                 onclick="return confirm('Set this contact as active? This will deactivate other contacts.')"
@@ -109,17 +93,15 @@ include __DIR__ . '/../layout/sidebar.php';
                                                             </a>
                                                         <?php endif; ?>
 
-                                                        <!-- Edit -->
                                                         <a href="<?php echo $base_url; ?>/cms/contact/edit/<?php echo $contact['id']; ?>"
                                                             class="btn btn-sm btn-info"
                                                             title="Edit">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
 
-                                                        <!-- Delete -->
                                                         <a href="<?php echo $base_url; ?>/cms/contact/delete/<?php echo $contact['id']; ?>"
                                                             class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to delete this contact?')"
+                                                            onclick="return confirm('Delete this contact?')"
                                                             title="Delete">
                                                             <i class="ti ti-trash"></i>
                                                         </a>
@@ -143,39 +125,16 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
         </div>
-        <!-- [ Main Content ] end -->
-
     </div>
 </div>
 
 <?php
-// Page specific scripts
-$page_scripts = '
-<!-- DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $("#contactTable").DataTable({
-        order: [[0, "desc"]], // Sort by ID desc (newest first)
-        pageLength: 25,
-        language: {
-            search: "Search contacts:",
-            lengthMenu: "Show _MENU_ contacts per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ contacts",
-            infoEmpty: "No contacts found",
-            zeroRecords: "No matching contacts found"
-        }
-    });
-});
-</script>
-';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

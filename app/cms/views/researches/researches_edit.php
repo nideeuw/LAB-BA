@@ -52,12 +52,6 @@ include __DIR__ . '/../layout/sidebar.php';
                             </div>
 
                             <div class="mb-4">
-                                <label for="year" class="form-label fw-semibold">Year Started</label>
-                                <input type="number" class="form-control" id="year" name="year" min="1900" max="<?php echo date('Y') + 1; ?>" value="<?php echo $research['year'] ?? ''; ?>">
-                                <div class="form-text">Optional. Year when research started.</div>
-                            </div>
-
-                            <div class="mb-4">
                                 <div class="form-check form-switch">
                                     <input type="hidden" name="is_active" value="0">
                                     <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" <?php echo $research['is_active'] ? 'checked' : ''; ?>>

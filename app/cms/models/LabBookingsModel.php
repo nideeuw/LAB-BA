@@ -2,8 +2,9 @@
 
 class LabBookingsModel
 {
-    // ============ BOOKING QUERIES ============
-
+    /**
+     * Get all bookings (for CMS)
+     */
     public static function getAllBookings($conn)
     {
         try {
@@ -19,6 +20,51 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get bookings with pagination
+     */
+    public static function getBookingsPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+
+            $query = "SELECT lb.*, ub.nama as peminjam_name, ub.email as peminjam_email, ub.no_telp as peminjam_no_telp
+                      FROM lab_bookings lb
+                      LEFT JOIN user_bookings ub ON lb.id_peminjam = ub.id
+                      ORDER BY lb.tanggal_mulai DESC, lb.jam_mulai DESC
+                      LIMIT :limit OFFSET :offset";
+
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated bookings error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of bookings
+     */
+    public static function getTotalBookings($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM lab_bookings";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total bookings error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get booking by ID
+     */
     public static function getBookingById($id, $conn)
     {
         try {
@@ -35,6 +81,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get weekly schedule
+     */
     public static function getWeeklySchedule($startDate, $conn)
     {
         try {
@@ -65,6 +114,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get bookings by borrower
+     */
     public static function getBookingsByBorrower($id_peminjam, $conn)
     {
         try {
@@ -80,13 +132,12 @@ class LabBookingsModel
         }
     }
 
-    // ============ CONFLICT CHECK ============
-
+    /**
+     * Check time slot conflict
+     */
     public static function checkConflict($conn, $tanggal_mulai, $tanggal_selesai, $jam_mulai, $jam_selesai, $excludeId = null)
     {
         try {
-            // Only check ACTIVE bookings (pending, approved, in_use)
-            // REJECTED & CANCELED tidak block slot!
             $query = "SELECT COUNT(*) as count FROM lab_bookings 
                       WHERE is_active = TRUE
                       AND status IN ('pending', 'approved', 'in_use')
@@ -119,16 +170,16 @@ class LabBookingsModel
             return $result['count'] > 0;
         } catch (PDOException $e) {
             error_log("Check conflict error: " . $e->getMessage());
-            return false; // Allow on error (safer)
+            return false;
         }
     }
 
-    // ============ CREATE & UPDATE BOOKING ============
-
+    /**
+     * Create new booking
+     */
     public static function createBooking($data, $conn)
     {
         try {
-            // Check conflict (skip kalau rejected/canceled)
             if (!in_array($data['status'] ?? 'pending', ['rejected', 'canceled'])) {
                 if (self::checkConflict($conn, $data['tanggal_mulai'], $data['tanggal_selesai'], $data['jam_mulai'], $data['jam_selesai'])) {
                     return false;
@@ -166,10 +217,12 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Update booking
+     */
     public static function updateBooking($id, $data, $conn)
     {
         try {
-            // Check conflict (skip kalau rejected/canceled)
             if (!in_array($data['status'] ?? 'pending', ['rejected', 'canceled'])) {
                 if (self::checkConflict($conn, $data['tanggal_mulai'], $data['tanggal_selesai'], $data['jam_mulai'], $data['jam_selesai'], $id)) {
                     return false;
@@ -208,6 +261,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Delete booking
+     */
     public static function deleteBooking($id, $conn)
     {
         try {
@@ -220,8 +276,9 @@ class LabBookingsModel
         }
     }
 
-    // ============ STATUS MANAGEMENT ============
-
+    /**
+     * Approve booking
+     */
     public static function approveBooking($id, $conn)
     {
         try {
@@ -242,10 +299,12 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Reject booking
+     */
     public static function rejectBooking($id, $reason, $conn)
     {
         try {
-            // REJECT = DITOLAK admin (status 'rejected')
             $query = "UPDATE lab_bookings SET 
                         status = 'rejected',
                         rejection_reason = :reason,
@@ -265,10 +324,12 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Cancel booking
+     */
     public static function cancelBooking($id, $reason, $conn)
     {
         try {
-            // CANCEL = DIBATALKAN user/admin (status 'canceled')
             $query = "UPDATE lab_bookings SET 
                         status = 'canceled',
                         rejection_reason = :reason,
@@ -288,8 +349,9 @@ class LabBookingsModel
         }
     }
 
-    // ============ USER MANAGEMENT ============
-
+    /**
+     * Get all borrowers
+     */
     public static function getAllBorrowers($conn)
     {
         try {
@@ -305,6 +367,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get all user bookings
+     */
     public static function getAllUserBookings($conn)
     {
         try {
@@ -317,6 +382,47 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get user bookings with pagination
+     */
+    public static function getUserBookingsPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "SELECT * FROM user_bookings ORDER BY created_on DESC LIMIT :limit OFFSET :offset";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated user bookings error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of user bookings
+     */
+    public static function getTotalUserBookings($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM user_bookings";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total user bookings error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get user booking by ID
+     */
     public static function getUserBookingById($id, $conn)
     {
         try {
@@ -330,6 +436,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get user by NIP
+     */
     public static function getUserByNip($nip, $conn)
     {
         try {
@@ -343,6 +452,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Get user by email
+     */
     public static function getUserByEmail($email, $conn)
     {
         try {
@@ -356,6 +468,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Create user booking
+     */
     public static function createUserBooking($data, $conn)
     {
         try {
@@ -385,6 +500,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Update user booking
+     */
     public static function updateUserBooking($id, $data, $conn)
     {
         try {
@@ -416,6 +534,9 @@ class LabBookingsModel
         }
     }
 
+    /**
+     * Delete user booking
+     */
     public static function deleteUserBooking($id, $conn)
     {
         try {

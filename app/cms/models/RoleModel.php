@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Role Model
- * File: app/cms/models/RoleModel.php
- */
-
 class RoleModel
 {
     /**
@@ -20,6 +15,48 @@ class RoleModel
         } catch (PDOException $e) {
             error_log("Get all roles error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get roles with pagination
+     */
+    public static function getRolesPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "
+                SELECT * FROM role
+                ORDER BY id DESC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated roles error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of roles
+     */
+    public static function getTotalRoles($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM role";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total roles error: " . $e->getMessage());
+            return 0;
         }
     }
 
@@ -79,8 +116,8 @@ class RoleModel
     public static function createRole($data, $conn)
     {
         try {
-            $query = 'INSERT INTO role (role_code, role_name, is_active, created_by) 
-                      VALUES (:role_code, :role_name, :is_active, :created_by)';
+            $query = 'INSERT INTO role (role_code, role_name, is_active, created_by, created_on) 
+                      VALUES (:role_code, :role_name, :is_active, :created_by, NOW())';
 
             $stmt = $conn->prepare($query);
             $stmt->execute([
@@ -108,7 +145,7 @@ class RoleModel
                       role_name = :role_name,
                       is_active = :is_active,
                       modified_by = :modified_by,
-                      modified_on = CURRENT_TIMESTAMP
+                      modified_on = NOW()
                       WHERE id = :id';
 
             $stmt = $conn->prepare($query);

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Model: VisiMisiModel
- * Location: app/cms/models/VisiMisiModel.php
- * Purpose: Manage Visi & Misi - Multiple records with CRUD
- */
-
 class VisiMisiModel
 {
     /**
@@ -20,6 +14,46 @@ class VisiMisiModel
         } catch (PDOException $e) {
             error_log("Get all visi misi error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get visi misi with pagination
+     */
+    public static function getVisiMisiPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "SELECT * FROM visi_misi 
+                      ORDER BY created_on DESC 
+                      LIMIT :limit OFFSET :offset";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated visi misi error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of visi misi
+     */
+    public static function getTotalVisiMisi($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM visi_misi";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total visi misi error: " . $e->getMessage());
+            return 0;
         }
     }
 

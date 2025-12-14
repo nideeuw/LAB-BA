@@ -1,37 +1,23 @@
 <?php
-/**
- * Members List View
- * File: app/cms/views/members/members_index.php
- */
-
-// SET PAGE TITLE
 $page_title = 'Members Management';
-
-// Include layout
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
 ?>
 
-<!-- [ Main Content ] start -->
 <div class="pc-container">
     <div class="pc-content">
-
-        <!-- [ breadcrumb ] start -->
         <?php include __DIR__ . '/../layout/breadcrumb.php'; ?>
-        <!-- [ breadcrumb ] end -->
 
-        <!-- Flash Message -->
         <?php
         $flash = getFlash();
         if ($flash):
         ?>
             <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show" role="alert">
                 <?php echo $flash['message']; ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
 
-        <!-- [ Main Content ] start -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -43,7 +29,7 @@ include __DIR__ . '/../layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="membersTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -64,13 +50,13 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 <td><?php echo $member['id']; ?></td>
                                                 <td>
                                                     <?php if (!empty($member['image'])): ?>
-                                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($member['image']); ?>" 
-                                                             alt="<?php echo htmlspecialchars($member['nama']); ?>"
-                                                             class="rounded-circle"
-                                                             style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($member['image']); ?>"
+                                                            alt="<?php echo htmlspecialchars($member['nama']); ?>"
+                                                            class="rounded-circle"
+                                                            style="width: 50px; height: 50px; object-fit: cover;">
                                                     <?php else: ?>
-                                                        <div class="bg-light-primary rounded-circle d-flex align-items-center justify-content-center" 
-                                                             style="width: 50px; height: 50px;">
+                                                        <div class="bg-light-primary rounded-circle d-flex align-items-center justify-content-center"
+                                                            style="width: 50px; height: 50px;">
                                                             <i class="ti ti-user text-primary" style="font-size: 24px;"></i>
                                                         </div>
                                                     <?php endif; ?>
@@ -98,9 +84,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 </td>
                                                 <td>
                                                     <?php if (!empty($member['sinta_link'])): ?>
-                                                        <a href="<?php echo htmlspecialchars($member['sinta_link']); ?>" 
-                                                           target="_blank" 
-                                                           class="btn btn-sm btn-outline-primary">
+                                                        <a href="<?php echo htmlspecialchars($member['sinta_link']); ?>"
+                                                            target="_blank"
+                                                            class="btn btn-sm btn-outline-primary">
                                                             <i class="ti ti-external-link"></i> View
                                                         </a>
                                                     <?php else: ?>
@@ -124,14 +110,11 @@ include __DIR__ . '/../layout/sidebar.php';
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="btn-group" role="group">
-                                                        <!-- Edit -->
                                                         <a href="<?php echo $base_url; ?>/cms/members/edit/<?php echo $member['id']; ?>"
                                                             class="btn btn-sm btn-info"
                                                             title="Edit">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
-
-                                                        <!-- Delete -->
                                                         <a href="<?php echo $base_url; ?>/cms/members/delete/<?php echo $member['id']; ?>"
                                                             class="btn btn-sm btn-danger"
                                                             onclick="return confirm('Are you sure you want to delete this member?')"
@@ -158,40 +141,16 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
         </div>
-        <!-- [ Main Content ] end -->
-
     </div>
 </div>
 
 <?php
-// Page specific scripts
-$page_scripts = '
-<!-- DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $("#membersTable").DataTable({
-        order: [[2, "asc"]], // Sort by name
-        pageLength: 25,
-        language: {
-            search: "Search members:",
-            lengthMenu: "Show _MENU_ members per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ members",
-            infoEmpty: "No members found",
-            infoFiltered: "(filtered from _MAX_ total members)",
-            zeroRecords: "No matching members found"
-        }
-    });
-});
-</script>
-';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

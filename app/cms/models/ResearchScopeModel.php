@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Model: ResearchScopeModel
- * Location: app/cms/models/ResearchScopeModel.php
- * Purpose: Manage Research Scope (multiple records with CRUD)
- */
-
 class ResearchScopeModel
 {
     /**
@@ -20,6 +14,46 @@ class ResearchScopeModel
         } catch (PDOException $e) {
             error_log("Get all research scopes error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Get research scopes with pagination
+     */
+    public static function getResearchScopesPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "SELECT * FROM research_scope 
+                      ORDER BY created_on DESC 
+                      LIMIT :limit OFFSET :offset";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated research scopes error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of research scopes
+     */
+    public static function getTotalResearchScopes($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM research_scope";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total research scopes error: " . $e->getMessage());
+            return 0;
         }
     }
 
@@ -98,7 +132,6 @@ class ResearchScopeModel
                 'modified_by' => $_SESSION['user_name'] ?? 'system'
             ];
 
-            // Only update image if provided
             if (isset($data['image'])) {
                 $query .= ", image = :image";
                 $params['image'] = $data['image'];
@@ -155,12 +188,10 @@ class ResearchScopeModel
                 return false;
             }
 
-            // Check file size (max 5MB)
             if ($file['size'] > 5 * 1024 * 1024) {
                 return false;
             }
 
-            // Check file type
             $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $file['tmp_name']);
@@ -175,12 +206,10 @@ class ResearchScopeModel
                 mkdir($uploadDir, 0755, true);
             }
 
-            // Generate unique filename
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = uniqid() . '_' . time() . '.' . $extension;
             $filepath = $uploadDir . '/' . $filename;
 
-            // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
                 return 'uploads/research_scope/' . $filename;
             }

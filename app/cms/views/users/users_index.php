@@ -44,7 +44,7 @@ include __DIR__ . '/../layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="usersTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -52,7 +52,6 @@ include __DIR__ . '/../layout/sidebar.php';
                                         <th>Email</th>
                                         <th>Status</th>
                                         <th>Created At</th>
-                                        <th>Last Login</th>
                                         <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
@@ -88,17 +87,10 @@ include __DIR__ . '/../layout/sidebar.php';
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php if (!empty($user['created_at'])): ?>
-                                                        <small><?php echo date('d M Y H:i', strtotime($user['created_at'])); ?></small>
+                                                    <?php if (!empty($user['created_on'])): ?>
+                                                        <small><?php echo date('d M Y H:i', strtotime($user['created_on'])); ?></small>
                                                     <?php else: ?>
                                                         <span class="text-muted">-</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <?php if (!empty($user['last_login'])): ?>
-                                                        <small><?php echo date('d M Y H:i', strtotime($user['last_login'])); ?></small>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">Never</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-end">
@@ -129,7 +121,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="7" class="text-center py-4">
+                                            <td colspan="6" class="text-center py-4">
                                                 <div class="text-muted">
                                                     <i class="ti ti-users f-40"></i>
                                                     <p class="mt-2">No users found</p>
@@ -143,6 +135,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
@@ -153,30 +148,5 @@ include __DIR__ . '/../layout/sidebar.php';
 </div>
 
 <?php
-// Page specific scripts
-$page_scripts = '
-<!-- DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $("#usersTable").DataTable({
-        order: [[0, "desc"]], // Sort by ID descending
-        pageLength: 25,
-        language: {
-            search: "Search users:",
-            lengthMenu: "Show _MENU_ users per page",
-            info: "Showing _START_ to _END_ of _TOTAL_ users",
-            infoEmpty: "No users found",
-            infoFiltered: "(filtered from _MAX_ total users)",
-            zeroRecords: "No matching users found"
-        }
-    });
-});
-</script>
-';
-
 include __DIR__ . '/../layout/footer.php';
 ?>

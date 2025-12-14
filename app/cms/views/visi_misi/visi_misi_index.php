@@ -1,10 +1,4 @@
 <?php
-
-/**
- * Visi Misi Index View
- * File: app/cms/views/visi_misi/visi_misi_index.php
- */
-
 $page_title = 'Visi Misi Management';
 include __DIR__ . '/../layout/header.php';
 include __DIR__ . '/../layout/sidebar.php';
@@ -35,12 +29,12 @@ include __DIR__ . '/../layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="visiMisiTable" class="table table-hover">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th width="5%">ID</th>
                                         <th width="30%">Visi</th>
-                                        <th width="35%">Misi (Preview)</th>
+                                        <th width="35%">Misi</th>
                                         <th width="10%">Status</th>
                                         <th width="10%">Created</th>
                                         <th width="10%" class="text-end">Actions</th>
@@ -110,6 +104,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php include __DIR__ . '/../layout/pagination.php'; ?>
+
                     </div>
                 </div>
             </div>
@@ -117,7 +114,6 @@ include __DIR__ . '/../layout/sidebar.php';
     </div>
 </div>
 
-<!-- Detail Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -145,22 +141,12 @@ include __DIR__ . '/../layout/sidebar.php';
 
 <?php
 $page_scripts = '
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    $("#visiMisiTable").DataTable({
-        order: [[0, "desc"]],
-        pageLength: 25
-    });
-});
-
 function viewDetail(item) {
     $("#modalVisi").text(item.visi);
     
-    // Parse misi - split by new line or period
     let misiText = item.misi;
     let misiArray = misiText.split(/\n|(?<=\.)\s+/).filter(m => m.trim());
     
@@ -174,7 +160,6 @@ function viewDetail(item) {
     
     $("#modalMisi").html(misiHtml);
     
-    // Status badge
     if (item.is_active) {
         $("#modalStatus").removeClass("bg-secondary").addClass("bg-success").text("Active");
     } else {

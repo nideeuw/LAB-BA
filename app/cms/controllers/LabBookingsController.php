@@ -2,24 +2,33 @@
 
 class LabBookingsController extends Controller
 {
-    public function index($conn, $params = [])
+    public function index($conn)
     {
         checkLogin();
 
-        $bookings = LabBookingsModel::getAllBookings($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = LabBookingsModel::getTotalBookings($conn);
+        $bookings = LabBookingsModel::getBookingsPaginated($conn, $page, $pageSize);
+        $dataLength = count($bookings);
 
         $data = [
             'page_title' => 'Lab Bookings Management',
             'active_page' => 'lab_bookings',
             'base_url' => getBaseUrl(),
             'bookings' => $bookings,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
         $this->view('cms/views/lab_bookings/lab_bookings_index', $data);
     }
 
-    public function add($conn, $params = [])
+    public function add($conn)
     {
         checkLogin();
 
@@ -36,7 +45,7 @@ class LabBookingsController extends Controller
         $this->view('cms/views/lab_bookings/lab_bookings_create', $data);
     }
 
-    public function store($conn, $params = [])
+    public function store($conn)
     {
         checkLogin();
 

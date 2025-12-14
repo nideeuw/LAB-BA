@@ -18,6 +18,44 @@ class MembersModel
     }
 
     /**
+     * Get members with pagination
+     */
+    public static function getMembersPaginated($conn, $page = 1, $pageSize = 10)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+
+            $query = 'SELECT * FROM members ORDER BY nama ASC LIMIT :limit OFFSET :offset';
+
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated members error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of members
+     */
+    public static function getTotalMembers($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM members";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total members error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get active members (for public view)
      */
     public static function getActiveMembers($conn)
@@ -156,7 +194,7 @@ class MembersModel
 
             $stmt = $conn->prepare($query);
             $stmt->execute([$member_id]);
-            
+
             $bidang_riset = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $bidang_riset[] = $row['title'];
@@ -190,7 +228,7 @@ class MembersModel
 
             $stmt = $conn->prepare($query);
             $stmt->execute([$member_id]);
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Get member publications error: " . $e->getMessage());
@@ -329,7 +367,7 @@ class MembersModel
         try {
             // Get image path before delete
             $member = self::getMemberById($id, $conn);
-            
+
             // Delete from database
             $query = 'DELETE FROM members WHERE id = :id';
             $stmt = $conn->prepare($query);
@@ -406,17 +444,17 @@ class MembersModel
     public static function getFullName($member)
     {
         $name = '';
-        
+
         if (!empty($member['gelar_depan'])) {
             $name .= $member['gelar_depan'] . ' ';
         }
-        
+
         $name .= $member['nama'];
-        
+
         if (!empty($member['gelar_belakang'])) {
             $name .= ', ' . $member['gelar_belakang'];
         }
-        
+
         return $name;
     }
 }

@@ -6,13 +6,22 @@ class MembersController extends Controller
     {
         checkLogin();
 
-        $members = MembersModel::getAllMembers($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = MembersModel::getTotalMembers($conn);
+        $members = MembersModel::getMembersPaginated($conn, $page, $pageSize);
+        $dataLength = count($members);
 
         $data = [
             'page_title' => 'Members Management',
             'active_page' => 'members',
             'base_url' => getBaseUrl(),
             'members' => $members,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
@@ -47,12 +56,10 @@ class MembersController extends Controller
             $errors[] = 'Name is required';
         }
 
-        // Validate email if provided
         if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Invalid email format';
         }
 
-        // Validate image upload
         $imagePath = null;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = MembersModel::uploadImage($_FILES['image']);
@@ -92,7 +99,6 @@ class MembersController extends Controller
     {
         checkLogin();
 
-        // Get ID from params
         $id = $params['id'] ?? 0;
 
         $member = MembersModel::getMemberById($id, $conn);
@@ -117,7 +123,6 @@ class MembersController extends Controller
     {
         checkLogin();
 
-        // Get ID from params
         $id = $params['id'] ?? 0;
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -130,7 +135,6 @@ class MembersController extends Controller
             $errors[] = 'Name is required';
         }
 
-        // Validate email if provided
         if (!empty($_POST['email']) && !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Invalid email format';
         }
@@ -150,11 +154,9 @@ class MembersController extends Controller
             'is_active' => isset($_POST['is_active']) && $_POST['is_active'] == '1'
         ];
 
-        // Handle image upload if new image provided
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = MembersModel::uploadImage($_FILES['image']);
             if ($imagePath) {
-                // Delete old image
                 $oldMember = MembersModel::getMemberById($id, $conn);
                 if (!empty($oldMember['image'])) {
                     $oldImagePath = ROOT_PATH . 'assets/' . $oldMember['image'];
@@ -183,7 +185,6 @@ class MembersController extends Controller
     {
         checkLogin();
 
-        // Get ID from params
         $id = $params['id'] ?? 0;
 
         $result = MembersModel::deleteMember($id, $conn);

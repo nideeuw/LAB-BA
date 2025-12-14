@@ -6,13 +6,22 @@ class BannerController extends Controller
     {
         checkLogin();
 
-        $banner = BannerModel::getAllBanner($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = BannerModel::getTotalBanner($conn);
+        $banner = BannerModel::getBannerPaginated($conn, $page, $pageSize);
+        $dataLength = count($banner);
 
         $data = [
             'page_title' => 'Banner Management',
             'active_page' => 'banner',
             'base_url' => getBaseUrl(),
             'banner' => $banner,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
@@ -43,7 +52,6 @@ class BannerController extends Controller
 
         $errors = [];
 
-        // Validate image upload (REQUIRED)
         $imagePath = null;
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             $errors[] = 'Image is required';
@@ -113,11 +121,9 @@ class BannerController extends Controller
             'is_active' => isset($_POST['is_active']) ? true : false
         ];
 
-        // Handle image upload if new image provided
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = BannerModel::uploadImage($_FILES['image']);
             if ($imagePath) {
-                // Delete old image
                 $oldBanner = BannerModel::getBannerById($id, $conn);
                 if (!empty($oldBanner['image'])) {
                     $oldImagePath = ROOT_PATH . 'assets/' . $oldBanner['image'];

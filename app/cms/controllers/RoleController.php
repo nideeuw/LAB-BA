@@ -6,13 +6,22 @@ class RoleController extends Controller
     {
         checkLogin();
 
-        $roles = RoleModel::getAllRoles($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = RoleModel::getTotalRoles($conn);
+        $roles = RoleModel::getRolesPaginated($conn, $page, $pageSize);
+        $dataLength = count($roles);
 
         $data = [
             'page_title' => 'Role Management',
             'active_page' => 'role',
             'base_url' => getBaseUrl(),
             'roles' => $roles,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 
@@ -59,7 +68,7 @@ class RoleController extends Controller
             'role_code' => strtoupper(trim($_POST['role_code'])),
             'role_name' => trim($_POST['role_name']),
             'is_active' => isset($_POST['is_active']) ? true : false,
-            'created_by' => $_SESSION['user_name']
+            'created_by' => $_SESSION['username'] ?? 'system'
         ];
 
         $result = RoleModel::createRole($roleData, $conn);
@@ -135,7 +144,7 @@ class RoleController extends Controller
             'role_code' => strtoupper(trim($_POST['role_code'])),
             'role_name' => trim($_POST['role_name']),
             'is_active' => isset($_POST['is_active']) ? true : false,
-            'modified_by' => $_SESSION['user_name']
+            'modified_by' => $_SESSION['username'] ?? 'system'
         ];
 
         $result = RoleModel::updateRole($id, $roleData, $conn);

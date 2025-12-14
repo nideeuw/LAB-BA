@@ -9,13 +9,26 @@ class PublicationsController extends Controller
     {
         checkLogin();
 
-        $publications = PublicationsModel::getAllPublications($conn);
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = isset($_GET['pageSize']) ? intval($_GET['pageSize']) : 10;
+
+        $total = PublicationsModel::getTotalPublications($conn);
+        $publications = PublicationsModel::getPublicationsPaginated($conn, $page, $pageSize);
+        $dataLength = count($publications);
+
+        foreach ($publications as &$pub) {
+            $pub['member_full_name'] = PublicationsModel::getMemberFullName($pub);
+        }
 
         $data = [
             'page_title' => 'Publications Management',
             'active_page' => 'publications',
             'base_url' => getBaseUrl(),
             'publications' => $publications,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'dataLength' => $dataLength,
             'conn' => $conn
         ];
 

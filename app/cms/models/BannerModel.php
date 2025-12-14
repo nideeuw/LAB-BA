@@ -18,6 +18,49 @@ class BannerModel
     }
 
     /**
+     * Get banner with pagination
+     */
+    public static function getBannerPaginated($conn, $page = 1, $pageSize = 25)
+    {
+        try {
+            $offset = ($page - 1) * $pageSize;
+            
+            $query = "
+                SELECT * 
+                FROM banner 
+                ORDER BY created_on DESC
+                LIMIT :limit OFFSET :offset
+            ";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Get paginated banner error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of banners
+     */
+    public static function getTotalBanner($conn)
+    {
+        try {
+            $query = "SELECT COUNT(*) as total FROM banner";
+            $stmt = $conn->query($query);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        } catch (PDOException $e) {
+            error_log("Get total banner error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get active banner items (for public view)
      */
     public static function getActiveBanner($conn)
@@ -88,7 +131,6 @@ class BannerModel
                         modified_by = :modified_by,
                         modified_on = NOW()';
 
-            // Only update image if new image provided
             if (isset($data['image'])) {
                 $query .= ', image = :image';
             }
@@ -119,15 +161,12 @@ class BannerModel
     public static function deleteBanner($id, $conn)
     {
         try {
-            // Get image path before delete
             $banner = self::getBannerById($id, $conn);
 
-            // Delete from database
             $query = 'DELETE FROM banner WHERE id = :id';
             $stmt = $conn->prepare($query);
             $result = $stmt->execute(['id' => $id]);
 
-            // Delete image file if exists
             if ($result && !empty($banner['image'])) {
                 $imagePath = ROOT_PATH . 'assets/' . $banner['image'];
                 if (file_exists($imagePath)) {
@@ -144,22 +183,18 @@ class BannerModel
 
     /**
      * Upload and save image
-     * Returns: image path or false
      */
     public static function uploadImage($file)
     {
         try {
-            // Validate file
             if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
                 return false;
             }
 
-            // Check file size (max 5MB)
             if ($file['size'] > 5 * 1024 * 1024) {
                 return false;
             }
 
-            // Check file type
             $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $file['tmp_name']);
@@ -169,20 +204,16 @@ class BannerModel
                 return false;
             }
 
-            // Create upload directory structure
             $uploadDir = ROOT_PATH . 'assets/uploads/banner/' . date('Y/m');
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
 
-            // Generate unique filename
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = uniqid() . '_' . time() . '.' . $extension;
             $filepath = $uploadDir . '/' . $filename;
 
-            // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                // Return relative path for database
                 return 'uploads/banner/' . date('Y/m') . '/' . $filename;
             }
 

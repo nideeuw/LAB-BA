@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Dashboard View - Enhanced
  * File: app/cms/views/dashboard.php
@@ -251,12 +252,12 @@ include __DIR__ . '/layout/sidebar.php';
                                                         </div>
                                                         <div>
                                                             <h6 class="mb-0">
-                                                                <?php 
+                                                                <?php
                                                                 $fullName = '';
                                                                 if (!empty($member['gelar_depan'])) $fullName .= $member['gelar_depan'] . ' ';
                                                                 $fullName .= $member['nama'];
                                                                 if (!empty($member['gelar_belakang'])) $fullName .= ', ' . $member['gelar_belakang'];
-                                                                echo htmlspecialchars($fullName); 
+                                                                echo htmlspecialchars($fullName);
                                                                 ?>
                                                             </h6>
                                                         </div>
@@ -274,8 +275,8 @@ include __DIR__ . '/layout/sidebar.php';
                                                     </small>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="<?php echo $base_url; ?>/cms/members/edit/<?php echo $member['id']; ?>" 
-                                                       class="btn btn-sm btn-link-info">
+                                                    <a href="<?php echo $base_url; ?>/cms/members/edit/<?php echo $member['id']; ?>"
+                                                        class="btn btn-sm btn-link-info">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
@@ -326,12 +327,12 @@ include __DIR__ . '/layout/sidebar.php';
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <?php 
+                                                    <?php
                                                     $authorName = '';
                                                     if (!empty($pub['gelar_depan'])) $authorName .= $pub['gelar_depan'] . ' ';
                                                     $authorName .= $pub['nama'] ?? 'Unknown';
                                                     if (!empty($pub['gelar_belakang'])) $authorName .= ', ' . $pub['gelar_belakang'];
-                                                    echo htmlspecialchars($authorName); 
+                                                    echo htmlspecialchars($authorName);
                                                     ?>
                                                 </td>
                                                 <td>
@@ -345,8 +346,8 @@ include __DIR__ . '/layout/sidebar.php';
                                                     </small>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="<?php echo $base_url; ?>/cms/publications/edit/<?php echo $pub['id']; ?>" 
-                                                       class="btn btn-sm btn-link-info">
+                                                    <a href="<?php echo $base_url; ?>/cms/publications/edit/<?php echo $pub['id']; ?>"
+                                                        class="btn btn-sm btn-link-info">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
@@ -424,8 +425,8 @@ include __DIR__ . '/layout/sidebar.php';
                                                     </span>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="<?php echo $base_url; ?>/cms/lab_bookings/edit/<?php echo $booking['id']; ?>" 
-                                                       class="btn btn-sm btn-link-warning">
+                                                    <a href="<?php echo $base_url; ?>/cms/lab_bookings/edit/<?php echo $booking['id']; ?>"
+                                                        class="btn btn-sm btn-link-warning">
                                                         <i class="ti ti-eye"></i>
                                                     </a>
                                                 </td>
@@ -496,6 +497,15 @@ include __DIR__ . '/layout/sidebar.php';
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
+                            <!-- View Website - Featured -->
+                            <a href="<?php echo $base_url; ?>"
+                                target="_blank"
+                                class="btn btn-primary">
+                                <i class="ti ti-world me-2"></i>
+                                View Public Website
+                            </a>
+                            <hr class="my-2">
+                            
                             <a href="<?php echo $base_url; ?>/cms/members/create" class="btn btn-light-primary">
                                 <i class="ti ti-user-plus me-2"></i>
                                 Add New Member
