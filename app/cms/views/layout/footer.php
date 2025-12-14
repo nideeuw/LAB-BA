@@ -7,13 +7,6 @@
                         Lab BA &copy; <?php echo date('Y'); ?> Made with ❤️ by Your Team
                     </p>
                 </div>
-                <div class="col-auto my-1">
-                    <ul class="list-inline footer-link mb-0">
-                        <li class="list-inline-item"><a href="/">Home</a></li>
-                        <li class="list-inline-item"><a href="/privacy">Privacy</a></li>
-                        <li class="list-inline-item"><a href="/contact">Contact</a></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </footer>

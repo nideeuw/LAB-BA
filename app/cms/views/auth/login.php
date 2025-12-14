@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LAB-BA | Login</title>
   <link href="<?php echo $base_url; ?>/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="<?php echo $base_url; ?>/assets/css/login.css" rel="stylesheet">
+  <link rel="icon" href="<?php echo $base_url; ?>/assets/img/logo.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <div class="animated-bg">
     <div class="bubble"></div>
@@ -23,7 +26,7 @@
 
       <div class="col-md-6 login-form-section">
         <div class="login-form-wrapper">
-          
+
           <div class="logo-container animate-fade-in">
             <img src="<?php echo $base_url; ?>/assets/img/logo_black.png" alt="LAB-BA Logo" class="img-fluid logo-img">
             <h2 class="welcome-text">Welcome!</h2>
@@ -38,7 +41,7 @@
           <?php endif; ?>
 
           <form action="" method="POST" class="login-form animate-slide-up" id="loginForm">
-            
+
             <div class="form-group mb-3">
               <label for="username" class="form-label">
                 <i class="fas fa-user me-2"></i>Username
@@ -89,7 +92,7 @@
         <div class="mascot-container animate-float">
           <img src="<?php echo $base_url; ?>/assets/img/maskot.png" alt="LAB-BA Mascot" class="img-fluid mascot-img">
         </div>
-        
+
         <div class="decorative-circle circle-1"></div>
         <div class="decorative-circle circle-2"></div>
         <div class="decorative-circle circle-3"></div>
@@ -99,7 +102,7 @@
   </div>
 
   <script src="<?php echo $base_url; ?>/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  
+
   <script>
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
@@ -108,7 +111,7 @@
     togglePassword.addEventListener('click', function() {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
-      
+
       if (type === 'password') {
         eyeIcon.classList.remove('fa-eye-slash');
         eyeIcon.classList.add('fa-eye');
@@ -135,4 +138,5 @@
   </script>
 
 </body>
+
 </html>
