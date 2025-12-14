@@ -45,7 +45,7 @@ class MembersController extends Controller
     }
 
     /**
-     * Display member detail
+     * Display member detail with pagination for publications
      */
     public function detail($conn, $params = [])
     {
@@ -57,6 +57,10 @@ class MembersController extends Controller
             return;
         }
 
+        // Get pagination parameters
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $pageSize = 10; // Publications per page
+
         // Get member detail from model
         $memberDetail = MembersModel::getMemberDetailForProfile($id, $conn);
 
@@ -65,18 +69,28 @@ class MembersController extends Controller
             return;
         }
 
-        $publikasi_list = [];
-        if (!empty($memberDetail['publikasi_list'])) {
-            foreach ($memberDetail['publikasi_list'] as $pub) {
-                $publikasi_list[] = [
-                    'id' => $pub['id'] ?? null,
-                    'judul' => $pub['title'] ?? $pub['judul'] ?? '',
-                    'tahun' => $pub['year'] ?? $pub['tahun'] ?? '',
-                    'kategori' => $pub['kategori_publikasi'] ?? $pub['kategori'] ?? '-',
-                    'journal_name' => $pub['journal_name'] ?? '',
-                    'journal_link' => $pub['journal_link'] ?? ''
-                ];
-            }
+        // Get all publications for this member
+        $allPublikasi = $memberDetail['publikasi_list'] ?? [];
+        $totalPublikasi = count($allPublikasi);
+
+        // Calculate pagination
+        $totalPages = ceil($totalPublikasi / $pageSize);
+        $offset = ($page - 1) * $pageSize;
+
+        // Slice publications for current page
+        $publikasi_list = array_slice($allPublikasi, $offset, $pageSize);
+
+        // Transform publikasi data
+        $transformedPublikasi = [];
+        foreach ($publikasi_list as $pub) {
+            $transformedPublikasi[] = [
+                'id' => $pub['id'] ?? null,
+                'judul' => $pub['title'] ?? $pub['judul'] ?? '',
+                'tahun' => $pub['year'] ?? $pub['tahun'] ?? '',
+                'kategori' => $pub['kategori_publikasi'] ?? $pub['kategori'] ?? '-',
+                'journal_name' => $pub['journal_name'] ?? '',
+                'journal_link' => $pub['journal_link'] ?? ''
+            ];
         }
 
         // Pass data to view
@@ -85,8 +99,11 @@ class MembersController extends Controller
             'base_url' => getBaseUrl(),
             'member' => $memberDetail,
             'bidang_riset' => $memberDetail['bidang_riset'],
-            'publikasi_list' => $publikasi_list,  // Use transformed data
-            'total_publikasi' => count($publikasi_list),
+            'publikasi_list' => $transformedPublikasi,
+            'total_publikasi' => $totalPublikasi,
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'totalPages' => $totalPages,
             'conn' => $conn
         ];
 
