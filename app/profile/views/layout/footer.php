@@ -115,7 +115,6 @@ $email = $contactInfo['email'] ?? 'laboratoriumBA@polinema.ac.id';
         <div class="footer-bottom-content">
             <p>&copy; <?php echo date('Y'); ?> Laboratorium Business Analyst | POLITEKNIK NEGERI MALANG</p>
             <p class="footer-tagline">
-                <i class="fas fa-heart"></i> Empowering Future Business Analysts
             </p>
         </div>
     </div>

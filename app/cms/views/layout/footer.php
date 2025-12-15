@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col my-1">
                     <p class="m-0">
-                        Lab BA &copy; <?php echo date('Y'); ?> Made with ❤️
+                        Lab BA &copy; <?php echo date('Y'); ?> 
                     </p>
                 </div>
             </div>
