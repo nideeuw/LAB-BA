@@ -31,7 +31,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold">Current Photo</label>
                                     <div>
-                                        <img src="<?php echo $base_url; ?>/public/<?php echo htmlspecialchars($member['image']); ?>" 
+                                        <img src="<?php echo $base_url; ?>/assets/<?php echo htmlspecialchars($member['image']); ?>" 
                                              alt="Current photo" 
                                              class="rounded-circle" 
                                              style="width: 150px; height: 150px; object-fit: cover;">
