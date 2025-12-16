@@ -73,7 +73,7 @@ include __DIR__ . '/../layout/sidebar.php';
 
                             <div class="mb-4">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" checked>
                                     <label class="form-check-label" for="is_active">Active (Visible on public page)</label>
                                 </div>
                             </div>
