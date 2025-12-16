@@ -91,9 +91,11 @@ $router->add('/cms/gallery/delete/{id}', 'cms/Gallery/delete');
 // Members Management
 $router->add('/cms/members', 'cms/Members/index');
 $router->add('/cms/members/add', 'cms/Members/add');
+$router->add('/cms/members/store', 'cms/Members/store');
 $router->add('/cms/members/edit/{id}', 'cms/Members/edit');
 $router->add('/cms/members/update/{id}', 'cms/Members/update');
-$router->add('/cms/members/delete', 'cms/Members/delete');
+$router->add('/cms/members/delete/{id}', 'cms/Members/delete');
+
 
 // Publications Management
 $router->add('/cms/publications', 'cms/Publications/index');
