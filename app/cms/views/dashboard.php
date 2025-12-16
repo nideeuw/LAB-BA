@@ -511,11 +511,11 @@ include __DIR__ . '/layout/sidebar.php';
                                 Add New Member
                             </a>
                             <a href="<?php echo $base_url; ?>/cms/publications/create" class="btn btn-light-info">
-                                <i class="ti ti-book-upload me-2"></i>
+                                <i class="ti ti-table-plus me-2"></i>
                                 Add Publication
                             </a>
                             <a href="<?php echo $base_url; ?>/cms/gallery/create" class="btn btn-light-success">
-                                <i class="ti ti-photo-plus me-2"></i>
+                                <i class="ti ti-photo-circle-plus me-2"></i>
                                 Upload to Gallery
                             </a>
                             <a href="<?php echo $base_url; ?>/cms/lab_bookings/create" class="btn btn-light-warning">
@@ -589,7 +589,7 @@ include __DIR__ . '/layout/sidebar.php';
                             <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
                                 <a href="<?php echo $base_url; ?>/cms/research_focus" class="text-decoration-none">
                                     <div class="p-3 rounded bg-light-info">
-                                        <i class="ti ti-microscope text-info d-block mb-2" style="font-size: 32px;"></i>
+                                        <i class="ti ti-focus-2 text-info d-block mb-2" style="font-size: 32px;"></i>
                                         <h6 class="mb-0 text-info">Research Focus</h6>
                                         <small class="text-muted">Focus Areas</small>
                                     </div>
@@ -639,7 +639,7 @@ include __DIR__ . '/layout/sidebar.php';
                             <div class="col-md-3 col-sm-6">
                                 <a href="<?php echo $base_url; ?>/cms/user_bookings" class="text-decoration-none">
                                     <div class="p-3 rounded bg-light-info">
-                                        <i class="ti ti-user-cog text-info d-block mb-2" style="font-size: 32px;"></i>
+                                        <i class="ti ti-user-plus text-info d-block mb-2" style="font-size: 32px;"></i>
                                         <h6 class="mb-0 text-info">User Bookings</h6>
                                         <small class="text-muted">Manage Users</small>
                                     </div>
