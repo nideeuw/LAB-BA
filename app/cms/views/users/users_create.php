@@ -33,8 +33,13 @@ include __DIR__ . '/../layout/sidebar.php';
                             </div>
 
                             <div class="mb-4">
-                                <label for="email" class="form-label fw-semibold">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="user@example.com">
+                                <label for="full_name" class="form-label fw-semibold">Full Name</label>
+                                <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Enter full name">
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required placeholder="user@example.com">
                             </div>
 
                             <div class="mb-4">
@@ -48,8 +53,25 @@ include __DIR__ . '/../layout/sidebar.php';
                             </div>
 
                             <div class="mb-4">
+                                <label for="role_id" class="form-label fw-semibold">Role</label>
+                                <select class="form-select" id="role_id" name="role_id">
+                                    <option value="">Select Role (Optional)</option>
+                                    <?php
+                                    // Get active roles from database
+                                    $activeRoles = RoleModel::getActiveRoles($conn);
+                                    foreach ($activeRoles as $role):
+                                    ?>
+                                        <option value="<?php echo $role['id']; ?>">
+                                            <?php echo htmlspecialchars($role['role_name']); ?> (<?php echo htmlspecialchars($role['role_code']); ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <small class="text-muted">Leave empty if no role assignment needed</small>
+                            </div>
+
+                            <div class="mb-4">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" checked>
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>
@@ -73,6 +95,7 @@ include __DIR__ . '/../layout/sidebar.php';
 
 <?php
 $page_scripts = '
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
     $("#userForm").on("submit", function(e) {

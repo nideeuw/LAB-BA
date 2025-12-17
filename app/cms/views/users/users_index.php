@@ -49,7 +49,9 @@ include __DIR__ . '/../layout/sidebar.php';
                                     <tr>
                                         <th>ID</th>
                                         <th>Username</th>
+                                        <th>Full Name</th>
                                         <th>Email</th>
+                                        <th>Role</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th class="text-end">Actions</th>
@@ -58,6 +60,13 @@ include __DIR__ . '/../layout/sidebar.php';
                                 <tbody>
                                     <?php if (!empty($users)): ?>
                                         <?php foreach ($users as $user): ?>
+                                            <?php
+                                            // Get role info if role_id exists
+                                            $userRole = null;
+                                            if (!empty($user['role_id'])) {
+                                                $userRole = RoleModel::getRoleById($user['role_id'], $conn);
+                                            }
+                                            ?>
                                             <tr>
                                                 <td><?php echo $user['id']; ?></td>
                                                 <td>
@@ -73,8 +82,24 @@ include __DIR__ . '/../layout/sidebar.php';
                                                     </div>
                                                 </td>
                                                 <td>
+                                                    <?php if (!empty($user['full_name'])): ?>
+                                                        <?php echo htmlspecialchars($user['full_name']); ?>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
                                                     <?php if (!empty($user['email'])): ?>
                                                         <?php echo htmlspecialchars($user['email']); ?>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if ($userRole): ?>
+                                                        <span class="badge bg-info">
+                                                            <?php echo htmlspecialchars($userRole['role_name']); ?>
+                                                        </span>
                                                     <?php else: ?>
                                                         <span class="text-muted">-</span>
                                                     <?php endif; ?>
@@ -121,7 +146,7 @@ include __DIR__ . '/../layout/sidebar.php';
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-4">
+                                            <td colspan="8" class="text-center py-4">
                                                 <div class="text-muted">
                                                     <i class="ti ti-users f-40"></i>
                                                     <p class="mt-2">No users found</p>

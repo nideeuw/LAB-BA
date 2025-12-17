@@ -52,8 +52,12 @@ class UsersController extends Controller
 
         $errors = [];
 
+        // Validasi
         if (empty($_POST['username'])) {
             $errors[] = 'Username is required';
+        }
+        if (empty($_POST['email'])) {
+            $errors[] = 'Email is required';
         }
         if (empty($_POST['password'])) {
             $errors[] = 'Password is required';
@@ -61,17 +65,37 @@ class UsersController extends Controller
         if (strlen($_POST['password']) < 6) {
             $errors[] = 'Password must be at least 6 characters';
         }
+        if ($_POST['password'] !== $_POST['confirm_password']) {
+            $errors[] = 'Passwords do not match';
+        }
 
         if (!empty($errors)) {
             setFlash('danger', implode('<br>', $errors));
             redirect('/cms/users/create');
         }
 
-        $result = UserModel::register(
-            trim($_POST['username']),
-            $_POST['password'],
-            $conn
-        );
+        // Prepare data
+        $userData = [
+            'username' => trim($_POST['username']),
+            'password' => $_POST['password'],
+            'is_active' => isset($_POST['is_active']) ? 1 : 0,
+            'created_by' => $_SESSION['user_id'] ?? null
+        ];
+
+        // Add optional fields
+        if (!empty($_POST['full_name'])) {
+            $userData['full_name'] = trim($_POST['full_name']);
+        }
+
+        if (!empty($_POST['email'])) {
+            $userData['email'] = trim($_POST['email']);
+        }
+
+        if (isset($_POST['role_id']) && $_POST['role_id'] !== '') {
+            $userData['role_id'] = intval($_POST['role_id']);
+        }
+
+        $result = UserModel::register($userData, $conn);
 
         if ($result) {
             setFlash('success', 'User created successfully!');
@@ -126,14 +150,37 @@ class UsersController extends Controller
             $errors[] = 'Password must be at least 6 characters';
         }
 
+        if (!empty($_POST['password']) && $_POST['password'] !== $_POST['confirm_password']) {
+            $errors[] = 'Passwords do not match';
+        }
+
         if (!empty($errors)) {
             setFlash('danger', implode('<br>', $errors));
             redirect('/cms/users/edit/' . $id);
         }
 
         $userData = [
-            'username' => trim($_POST['username'])
+            'username' => trim($_POST['username']),
+            'modified_by' => $_SESSION['user_id'] ?? null
         ];
+
+        if (isset($_POST['full_name'])) {
+            $userData['full_name'] = !empty($_POST['full_name']) ? trim($_POST['full_name']) : null;
+        }
+
+        if (isset($_POST['email'])) {
+            $userData['email'] = !empty($_POST['email']) ? trim($_POST['email']) : null;
+        }
+
+        if (isset($_POST['role_id'])) {
+            $userData['role_id'] = $_POST['role_id'] !== '' ? intval($_POST['role_id']) : null;
+        }
+
+        if (isset($_POST['is_active'])) {
+            $userData['is_active'] = 1;
+        } else {
+            $userData['is_active'] = 0;
+        }
 
         if (!empty($_POST['password'])) {
             $userData['password'] = $_POST['password'];

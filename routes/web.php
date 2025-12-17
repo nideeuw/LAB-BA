@@ -151,7 +151,9 @@ $router->add('/cms/users/delete/{id}', 'cms/Users/delete');
 // Role Management
 $router->add('/cms/role', 'cms/Role/index');
 $router->add('/cms/role/create', 'cms/Role/create');
+$router->add('/cms/role/store', 'cms/Role/store');
 $router->add('/cms/role/edit/{id}', 'cms/Role/edit');
+$router->add('/cms/role/update/{id}', 'cms/Role/update');
 $router->add('/cms/role/delete/{id}', 'cms/Role/delete');
 $router->add('/cms/role/toggle/{id}', 'cms/Role/toggle');
 
