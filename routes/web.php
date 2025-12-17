@@ -121,7 +121,7 @@ $router->add('/cms/lab_bookings/edit/{id}', 'cms/LabBookings/edit');
 $router->add('/cms/lab_bookings/update/{id}', 'cms/LabBookings/update');
 $router->add('/cms/lab_bookings/delete/{id}', 'cms/LabBookings/delete');
 $router->add('/cms/lab_bookings/approve/{id}', 'cms/LabBookings/approve');
-$router->add('/cms/lab_bookings/reject/{id}', 'cms/LabBookings/reject');
+$router->add('/cms/lab_bookings/reject', 'cms/LabBookings/reject');
 
 // User Bookings Management
 $router->add('/cms/user_bookings', 'cms/UserBookings/index');
