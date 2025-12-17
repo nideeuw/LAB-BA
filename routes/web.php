@@ -143,6 +143,7 @@ $router->add('/cms/contact/set-active/{id}', 'cms/Contact/setActive');
 // Users Management
 $router->add('/cms/users', 'cms/Users/index');
 $router->add('/cms/users/create', 'cms/Users/create');
+$router->add('/cms/users/store', 'cms/Users/store');
 $router->add('/cms/users/edit/{id}', 'cms/Users/edit');
 $router->add('/cms/users/update/{id}', 'cms/Users/update');
 $router->add('/cms/users/delete/{id}', 'cms/Users/delete');

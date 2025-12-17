@@ -506,23 +506,23 @@ include __DIR__ . '/layout/sidebar.php';
                             </a>
                             <hr class="my-2">
                             
-                            <a href="<?php echo $base_url; ?>/cms/members/create" class="btn btn-light-primary">
+                            <a href="<?php echo $base_url; ?>/cms/members/add" class="btn btn-light-primary">
                                 <i class="ti ti-user-plus me-2"></i>
                                 Add New Member
                             </a>
-                            <a href="<?php echo $base_url; ?>/cms/publications/create" class="btn btn-light-info">
-                                <i class="ti ti-table-plus me-2"></i>
+                            <a href="<?php echo $base_url; ?>/cms/publications/add" class="btn btn-light-info">
+                                <i class="ti ti-book-upload me-2"></i>
                                 Add Publication
                             </a>
-                            <a href="<?php echo $base_url; ?>/cms/gallery/create" class="btn btn-light-success">
-                                <i class="ti ti-photo-circle-plus me-2"></i>
+                            <a href="<?php echo $base_url; ?>/cms/gallery/add" class="btn btn-light-success">
+                                <i class="ti ti-photo-plus me-2"></i>
                                 Upload to Gallery
                             </a>
-                            <a href="<?php echo $base_url; ?>/cms/lab_bookings/create" class="btn btn-light-warning">
+                            <a href="<?php echo $base_url; ?>/cms/lab_bookings/add" class="btn btn-light-warning">
                                 <i class="ti ti-calendar-plus me-2"></i>
                                 Create Booking
                             </a>
-                            <a href="<?php echo $base_url; ?>/cms/banner/create" class="btn btn-light-danger">
+                            <a href="<?php echo $base_url; ?>/cms/banner/add" class="btn btn-light-danger">
                                 <i class="ti ti-photo me-2"></i>
                                 Add Banner
                             </a>
